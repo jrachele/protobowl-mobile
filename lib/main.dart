@@ -26,6 +26,8 @@ class ProtobowlApp extends StatelessWidget {
     middleware: [LoggingMiddleware.printer()]
   );
 
+//  final TextEditingController answerController = TextEditingController();
+
   ProtobowlApp() {
     // Mess with the Feng-shui of Redux because we are forced to
     server.channel.stream.listen((packet){

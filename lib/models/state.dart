@@ -14,12 +14,14 @@ class AppState {
 //  final Room room;
 
   final int questionTime;
+  final bool buzzed;
 
   AppState(
       { this.state,
         this.question,
         this.room,
-        this.questionTime
+        this.questionTime,
+        this.buzzed
 //        this.player = Player.blank,
 //        this.room = Room.blank,
       });
@@ -31,12 +33,13 @@ class AppState {
       room: Room(
         rate: 60
       ),
-      questionTime: 0
+      questionTime: 0,
+      buzzed: false
     );
   }
 
   @override
   String toString() {
-    return "\nTime: $questionTime\n$state\n$question\n$room\n";
+    return "\nTime: $questionTime\nPlayer buzzed: $buzzed\n$state\n$question\n$room\n";
   }
 }

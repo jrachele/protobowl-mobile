@@ -5,7 +5,7 @@ import 'package:flutterbowl/server.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/components/appbar.dart';
 import 'package:flutterbowl/components/questionreader.dart';
-import 'package:flutterbowl/components/buzzer.dart';
+import 'package:flutterbowl/components/buzzer/buzzer.dart';
 
 class ProtobowlPage extends StatelessWidget {
   @override

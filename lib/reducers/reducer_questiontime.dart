@@ -8,7 +8,13 @@ import 'package:flutterbowl/actions/actions.dart';
 int questionTimeReducer(AppState prev, dynamic action) {
   if (action is TickAction) {
     if (prev.state == GameState.RUNNING) {
+      // On each tick, if the question is running we will update the question timer
+      // because unfortunately it must be done client-side
       return prev.questionTime + prev.room.rate;
+    } else if (prev.state == GameState.FINISHED) {
+      // If the question is done, we will force the timer to the end just in case
+      // (for example when a player buzzes and gets the answer correct)
+      return prev.question.endTime;
     }
     return prev.questionTime;
   } else if (action is ReceivePacketAction) {

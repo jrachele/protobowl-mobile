@@ -34,9 +34,12 @@ GameState gameStateReducer(AppState prev, dynamic action) {
           return GameState.FINISHED;
         }
       } else {
-        // If attempt is non-null, that means there is an interrupt
-        // For now, we will say that it is from a buzz and not a prompt
-        return GameState.BUZZED;
+        jsonData = jsonData["attempt"];
+        if (jsonData["correct"] == "prompt") {
+          return GameState.PROMPTED;
+        } else {
+          return GameState.BUZZED;
+        }
       }
     }
     return prev.state;

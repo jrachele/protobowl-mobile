@@ -26,7 +26,23 @@ class Server{
     }
   }
 
-  void next() {
+  void typing(String text) {
+    if (channel != null) {
+      String answer = '5:::{"name":"guess","args":[{"text":"'
+          '$text","done":false},null]}';
+      channel.sink.add(answer);
+    }
+  }
+
+
+  void pushAnswer(String text) {
+    if (channel != null) {
+      String ans = '5:::{"name":"guess","args":[{"text":"$text","done":true},null]}';
+      channel.sink.add(ans);
+      print("Guessed");
+    }
+  }
+    void next() {
     String next = '5:::{"name":"next","args":[null,null]}';
     channel.sink.add(next);
     print("Next");
