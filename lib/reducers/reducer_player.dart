@@ -17,6 +17,8 @@ Player _parsePacket(Player prev, ReceivePacketAction action) {
   if (packet.contains("{")) {
     String data = packet.substring(packet.indexOf("{"));
     var jsonData = json.decode(data);
+    // Assign userID immediately when player joins, since Protobowl does not
+    // directly feed your exact userID to you when joining
     if (jsonData["name"] == "joined" &&
         (prev.userID == null || prev.userID == jsonData["args"][0]["id"])) {
       jsonData = jsonData["args"][0];
@@ -24,6 +26,20 @@ Player _parsePacket(Player prev, ReceivePacketAction action) {
         name: jsonData["name"],
         userID: jsonData["id"]
       );
+    }
+
+    if (jsonData["name"] == "sync") {
+      jsonData = jsonData["args"][0];
+      List<dynamic> users = jsonData["users"];
+      for (var user in users) {
+        if (user["id"] == prev.userID) {
+          // In case the name needs to be updated
+          return Player(
+            name: user["name"],
+            userID: user["id"]
+          );
+        }
+      }
     }
   }
   return prev;
