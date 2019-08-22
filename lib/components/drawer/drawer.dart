@@ -35,9 +35,9 @@ class ProtobowlDrawer extends StatelessWidget {
                 )
           ),
               ),
-              UserView(viewModel),
+              UserView(context, viewModel),
               RoomView(viewModel.room),
-              LeaderboardView(viewModel.room),
+              LeaderboardView(viewModel),
             ],
           )
         );

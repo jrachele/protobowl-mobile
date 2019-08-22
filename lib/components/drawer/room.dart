@@ -11,7 +11,7 @@ ExpansionTile RoomView(Room room) {
             fontSize: 18
         )),
     leading: Icon(
-        FontAwesomeIcons.book,
+        FontAwesomeIcons.doorOpen,
     ),
     children: <Widget>[
 

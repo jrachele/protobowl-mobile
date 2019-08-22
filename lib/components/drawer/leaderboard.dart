@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbowl/models/models.dart';
+import 'package:flutterbowl/components/drawer/drawer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-ExpansionTile LeaderboardView(Room room) {
+ExpansionTile LeaderboardView(ProtobowlDrawerViewModel viewModel) {
   List<Widget> children = List();
-  List<dynamic> users = room.users;
+  List<dynamic> users = viewModel.room.users;
 
   // Protobowl makes you calculate points client side, so we are taking care of that
   for (var user in users) {
-    user["points"] = _calculateScore(room.scoring, user["corrects"], user["wrongs"]);
+    user["points"] = _calculateScore(viewModel.room.scoring, user["corrects"], user["wrongs"]);
   }
   // Sort the list in descending order
   users.sort((lhs, rhs){
@@ -24,7 +25,9 @@ ExpansionTile LeaderboardView(Room room) {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Icon(FontAwesomeIcons.portrait, color: Colors.blue),
-                  Text("${user["name"]}", style: _activeUser),
+                  Text("${user["name"]}",
+                      style: (viewModel.player.userID == user["id"]) ?
+                      _currentUser : _activeUser),
                   Text("Pts: ${user["points"]}", style: _activeUser)
                 ],
               )),
@@ -65,6 +68,11 @@ ExpansionTile LeaderboardView(Room room) {
 
 TextStyle _activeUser = TextStyle(
   fontSize: 16,
+);
+
+TextStyle _currentUser = TextStyle(
+  fontSize: 16,
+  color: Colors.amber
 );
 
 TextStyle _offlineUser = TextStyle(
