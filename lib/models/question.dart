@@ -13,6 +13,6 @@ class Question {
 
   @override
   String toString() {
-    return 'Question: \nqid: ${this.qid}\nquestion: ${this.question}\nanswer: ${this.answer}\ncategory: $category\ndifficulty: $difficulty\n';
+    return 'Question: \nqid: ${this.qid}\nanswer: ${this.answer}\nquestion: ${this.question}\ncategory: $category\ndifficulty: $difficulty\n';
   }
 }

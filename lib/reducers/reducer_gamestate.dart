@@ -22,6 +22,7 @@ GameState gameStateReducer(AppState prev, dynamic action) {
       if (jsonData["attempt"] == null) {
         int accumulated_time = jsonData["real_time"] - jsonData["time_offset"];
         int end_time = jsonData["end_time"];
+        if (accumulated_time == null || end_time == null) return prev.state;
         if (accumulated_time < end_time) {
 //          if (accumulated_time < end_time) {
           if (jsonData["time_freeze"] != 0) {
@@ -34,9 +35,12 @@ GameState gameStateReducer(AppState prev, dynamic action) {
           return GameState.FINISHED;
         }
       } else {
-        // If attempt is non-null, that means there is an interrupt
-        // For now, we will say that it is from a buzz and not a prompt
-        return GameState.BUZZED;
+        jsonData = jsonData["attempt"];
+        if (jsonData["correct"] == "prompt") {
+          return GameState.PROMPTED;
+        } else {
+          return GameState.BUZZED;
+        }
       }
     }
     return prev.state;

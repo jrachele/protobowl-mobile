@@ -23,14 +23,14 @@ Question _parsePacket(Question prev, ReceivePacketAction action) {
     if (jsonData["question"] == null) return prev;
     // Attempt is always null if nobody has buzzed
     if (jsonData["attempt"] == null) {
-      String category = jsonData["category"] == "" ? "Any Category" : jsonData["category"];
-      String difficulty = jsonData["difficulty"] == "" ? "Any Difficulty" : jsonData["difficulty"];
+//      String category = jsonData["category"] == "" ? "Any Category" : jsonData["category"];
+//      String difficulty = jsonData["difficulty"] == "" ? "Any Difficulty" : jsonData["difficulty"];
       return Question(
           qid: jsonData["qid"],
           question: jsonData["question"],
           answer: jsonData["answer"],
-          category: category,
-          difficulty: difficulty,
+          category: jsonData["info"]["category"],
+          difficulty: jsonData["info"]["difficulty"],
           beginTime: jsonData["begin_time"],
           endTime: jsonData["end_time"],
           timings: jsonData["timing"],

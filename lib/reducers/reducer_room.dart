@@ -30,7 +30,9 @@ Room roomReducer(AppState prev, dynamic action) {
         }
 
         return Room(
-            rate: jsonData["rate"].round()
+            rate: jsonData["rate"].round(),
+            users: jsonData["users"] ?? prev.room.users,
+            scoring: jsonData["scoring"] ?? prev.room.scoring
         );
       }
     }
