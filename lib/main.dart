@@ -13,6 +13,7 @@ import 'package:flutterbowl/server.dart';
 void main() async {
   // Initialize the server and get the channel asynchronously
   server.channel = await server.getChannel();
+  server.setName("billy");
   server.joinRoom("flutterbowl");
   runApp(new ProtobowlApp());
 }
@@ -23,7 +24,7 @@ class ProtobowlApp extends StatelessWidget {
   final store = Store<AppState>(
   appReducer,
   initialState: AppState.initial(),
-    middleware: [LoggingMiddleware.printer()]
+//    middleware: [LoggingMiddleware.printer()]
   );
 
 //  final TextEditingController answerController = TextEditingController();

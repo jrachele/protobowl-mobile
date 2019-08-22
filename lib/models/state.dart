@@ -10,6 +10,7 @@ class AppState {
   final GameState state;
   final Question question;
   final Room room;
+  final Player player;
 //  final Player player;
 //  final Room room;
 
@@ -20,6 +21,7 @@ class AppState {
       { this.state,
         this.question,
         this.room,
+        this.player,
         this.questionTime,
         this.buzzed
 //        this.player = Player.blank,
@@ -33,6 +35,7 @@ class AppState {
       room: Room(
         rate: 60
       ),
+      player: Player(),
       questionTime: 0,
       buzzed: false
     );

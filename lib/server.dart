@@ -34,6 +34,10 @@ class Server{
     }
   }
 
+  void setName(String name) {
+    String setName = '5:::{"name":"set_name","args":["' + name + '",null]}';
+    channel.sink.add(setName);
+  }
 
   void pushAnswer(String text) {
     if (channel != null) {

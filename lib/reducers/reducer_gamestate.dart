@@ -22,6 +22,7 @@ GameState gameStateReducer(AppState prev, dynamic action) {
       if (jsonData["attempt"] == null) {
         int accumulated_time = jsonData["real_time"] - jsonData["time_offset"];
         int end_time = jsonData["end_time"];
+        if (accumulated_time == null || end_time == null) return prev.state;
         if (accumulated_time < end_time) {
 //          if (accumulated_time < end_time) {
           if (jsonData["time_freeze"] != 0) {
