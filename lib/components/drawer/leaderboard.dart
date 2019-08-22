@@ -52,7 +52,6 @@ ExpansionTile LeaderboardView(Room room) {
   }
 
   return ExpansionTile(
-    initiallyExpanded: true,
     title: Text("Leaderboard",
     style: TextStyle(
       fontSize: 18
