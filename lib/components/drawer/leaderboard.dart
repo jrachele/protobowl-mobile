@@ -1,9 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/components/drawer/drawer.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-ExpansionTile LeaderboardView(ProtobowlDrawerViewModel viewModel) {
+class LeaderboardView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return StoreConnector<AppState, ProtobowlLeaderboardViewModel>(
+      converter: (Store<AppState> store) => ProtobowlLeaderboardViewModel(
+        room: store.state.room,
+        player: store.state.player
+      ),
+      builder: (BuildContext context, ProtobowlLeaderboardViewModel viewModel) {
+        return ExpansionTile(
+          title: Text("Leaderboard",
+              style: TextStyle(
+                  fontSize: 18
+              )),
+          leading: Icon(
+              FontAwesomeIcons.list
+          ),
+          children: _createUserWidgets(viewModel),
+        );
+      }
+    );
+  }
+}
+
+// This method returns a list of tiles containing individual information about
+// users connected to this room
+List<Widget> _createUserWidgets(ProtobowlLeaderboardViewModel viewModel) {
   List<Widget> children = List();
   List<dynamic> users = viewModel.room.users;
 
@@ -16,55 +45,59 @@ ExpansionTile LeaderboardView(ProtobowlDrawerViewModel viewModel) {
     return rhs["points"] - lhs["points"];
   });
 
-  for (var user in users.where((user) => user["online_state"])) {
+  // Nesting a function to avoid having to copy and paste. The objective is to
+  // populate the list with respect to online users first, then call the same
+  // builder on the offline users to keep them separated for the user
+  void _adduser(Map<String, dynamic> user) {
     children.add(
         Card(
-          child: ListTile(
-              title:
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.portrait, color: Colors.blue),
-                  Text("${user["name"]}",
-                      style: (viewModel.player.userID == user["id"]) ?
-                      _currentUser : _activeUser),
-                  Text("Pts: ${user["points"]}", style: _activeUser)
-                ],
-              )),
-          borderOnForeground: true,
+            child: ListTile(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                        child: Icon(FontAwesomeIcons.portrait,
+                            color: user["online_state"] ? Colors.blue : Colors.black26
+                        ),
+                        margin: EdgeInsets.fromLTRB(0, 0, 16, 0)
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Text("${user["name"]}",
+                            style: user["online_state"] ? (
+                                viewModel.player.userID == user["id"] ?
+                                _currentUser : _activeUser
+                            ) : _offlineUser,
+                            overflow: TextOverflow.fade,
+                            softWrap: false
+                        ),
+                      ),
+                    ),
+                    Container(
+                        child: Text("Pts: ${user["points"]}",
+                            style: _activeUser,
+                            overflow: TextOverflow.fade
+                        ),
+                        margin: EdgeInsets.fromLTRB(16, 0, 0, 0)
+                    )
+                  ],
+                )
+            )
         )
     );
+  }
+
+  for (var user in users.where((user) => user["online_state"])) {
+    _adduser(user);
   }
 
   for (var user in users.where((user) => !user["online_state"])) {
-    children.add(
-        Card(
-          child: ListTile(
-              title:
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Icon(FontAwesomeIcons.portrait, color: Colors.black26),
-                  Text("${user["name"]}", style: _offlineUser),
-                  Text("Pts: ${user["points"]}", style: _offlineUser)
-                ],
-              )),
-          borderOnForeground: true,
-        )
-    );
+    _adduser(user);
   }
 
-  return ExpansionTile(
-    title: Text("Leaderboard",
-    style: TextStyle(
-      fontSize: 18
-    )),
-    leading: Icon(
-      FontAwesomeIcons.list
-    ),
-    children: children,
-  );
+  return children;
 }
+
 
 TextStyle _activeUser = TextStyle(
   fontSize: 16,
@@ -93,4 +126,10 @@ int _calculateScore(Map<String, dynamic> scoring, Map<String, dynamic> corrects,
   score += (wrongs["normal"] ?? 0) * scoring["normal"][1];
 
   return score;
+}
+class ProtobowlLeaderboardViewModel {
+  final Room room;
+  final Player player;
+
+  ProtobowlLeaderboardViewModel({this.room, this.player});
 }

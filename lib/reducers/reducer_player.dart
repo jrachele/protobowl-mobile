@@ -31,6 +31,9 @@ Player _parsePacket(Player prev, ReceivePacketAction action) {
     if (jsonData["name"] == "sync") {
       jsonData = jsonData["args"][0];
       List<dynamic> users = jsonData["users"];
+      if (users == null) {
+        return prev;
+      }
       for (var user in users) {
         if (user["id"] == prev.userID) {
           // In case the name needs to be updated

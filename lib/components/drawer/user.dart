@@ -4,7 +4,6 @@ import 'package:redux/redux.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutterbowl/server.dart';
 import 'package:flutterbowl/models/models.dart';
-import 'package:flutterbowl/components/drawer/drawer.dart';
 
 class UserView extends StatelessWidget {
   @override
@@ -17,19 +16,25 @@ class UserView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Icon(FontAwesomeIcons.passport),
-                  Text("${player.name}", style: TextStyle(fontSize: 18)),
-                  IconButton(
-                    icon: Icon(FontAwesomeIcons.pen,
-                        size: 16),
-                    onPressed: () async {
-                      server.setName(await _asyncInputDialog(context));
-                    },
+                  Container(child: Icon(FontAwesomeIcons.passport),
+                  margin: EdgeInsets.fromLTRB(0, 0, 32, 0),),
+                  Expanded(
+                    child: Container(
+                      child: Text("${player.name}", style: TextStyle(fontSize: 18),
+                          overflow: TextOverflow.fade,
+                        softWrap: false),
+                    ),
+                  ),
+                  Container(
+                    child: IconButton(
+                      icon: Icon(FontAwesomeIcons.pen,
+                          size: 16),
+                      onPressed: () async {
+                        server.setName(await _asyncInputDialog(context));
+                      },
+                    ),
+                    margin: EdgeInsets.fromLTRB(32, 0, 0, 0)
                   )
-//          Text("${user["name"]}",
-//              style: (viewModel.player.userID == user["id"]) ?
-//              _currentUser : _activeUser),
-//          Text("Pts: ${user["points"]}", style: _activeUser)
                 ],
               )
           ),

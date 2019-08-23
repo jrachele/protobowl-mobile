@@ -34,6 +34,24 @@ Room roomReducer(AppState prev, dynamic action) {
             users: jsonData["users"] ?? prev.room.users,
             scoring: jsonData["scoring"] ?? prev.room.scoring
         );
+      } else {
+        // If rate is null, one of the users got updated. Thanks Protobowl
+        // for writing excellent code
+        String singleUserName = jsonData["users"][0]["name"];
+        String singleUserID = jsonData["users"][0]["id"];
+        List<dynamic> previousUsers = prev.room.users;
+        for (var user in previousUsers) {
+          if (user["id"] == singleUserID) {
+            user["name"] = singleUserName;
+          }
+        }
+
+        return Room(
+          rate: prev.room.rate,
+          users: previousUsers,
+          scoring: prev.room.scoring,
+        );
+
       }
     }
   }
