@@ -30,6 +30,7 @@ Room roomReducer(AppState prev, dynamic action) {
         }
 
         return Room(
+            name: server.roomName,
             rate: jsonData["rate"].round(),
             users: jsonData["users"] ?? prev.room.users,
             scoring: jsonData["scoring"] ?? prev.room.scoring
@@ -37,6 +38,7 @@ Room roomReducer(AppState prev, dynamic action) {
       } else {
         // If rate is null, one of the users got updated. Thanks Protobowl
         // for writing excellent code
+        if (jsonData["users"] == null) return prev.room;
         String singleUserName = jsonData["users"][0]["name"];
         String singleUserID = jsonData["users"][0]["id"];
         List<dynamic> previousUsers = prev.room.users;
@@ -47,6 +49,7 @@ Room roomReducer(AppState prev, dynamic action) {
         }
 
         return Room(
+          name: server.roomName,
           rate: prev.room.rate,
           users: previousUsers,
           scoring: prev.room.scoring,

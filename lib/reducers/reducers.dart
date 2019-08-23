@@ -1,4 +1,5 @@
 import 'package:flutterbowl/models/models.dart';
+import 'package:flutterbowl/actions/actions.dart';
 import 'package:flutterbowl/reducers/reducer_question.dart';
 import 'package:flutterbowl/reducers/reducer_player.dart';
 import 'package:flutterbowl/reducers/reducer_questiontime.dart';
@@ -9,6 +10,10 @@ import 'package:flutterbowl/reducers/reducer_buzzer.dart';
 // The entire appReducer will branch any action out so it may modify separate
 // state-containing entities as needed
 AppState appReducer(AppState state, action) {
+  // If there is a room change action, the whole thing has to go initial
+  if (action is RoomChangeAction) {
+    return AppState.initial();
+  }
   return AppState(
     state: gameStateReducer(state, action),
     question: questionsReducer(state.question, action),

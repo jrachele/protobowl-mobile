@@ -8,8 +8,10 @@ import 'package:http/http.dart' as http; // for requesting protobowl's socket
 class Server{
   final String server = "ocean.protobowl.com:80/socket.io/1/websocket/";
   IOWebSocketChannel channel;
+  String roomName;
   Timer timer;
   Function(Timer) timerCallback;
+  Function() serverChangeCallback;
 
   Future<IOWebSocketChannel> getChannel() async {
     final response = await http.get('http://' + server);
@@ -77,6 +79,8 @@ class Server{
 
   void joinRoom(String room) {
     String cookie = _randomString(41);
+//    String cookie = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
     print("Cookie: $cookie");
     String joinRoom =
         '5:::{"name":"join","args":[{"cookie":"$cookie","auth":null,"question_type":"qb","room_name":"$room","muwave":false,"agent":"M4/Web",'
@@ -84,6 +88,7 @@ class Server{
         '"version":8}]}';
     print("joinRoom: $joinRoom");
     channel?.sink?.add(joinRoom);
+    this.roomName = room;
   }
 
   String _randomString(int len) {

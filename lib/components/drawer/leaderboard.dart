@@ -35,6 +35,7 @@ class LeaderboardView extends StatelessWidget {
 List<Widget> _createUserWidgets(ProtobowlLeaderboardViewModel viewModel) {
   List<Widget> children = List();
   List<dynamic> users = viewModel.room.users;
+  if (users == null) return children;
 
   // Protobowl makes you calculate points client side, so we are taking care of that
   for (var user in users) {

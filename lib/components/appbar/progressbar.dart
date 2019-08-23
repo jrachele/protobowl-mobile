@@ -14,11 +14,11 @@ class ProtobowlProgressBar extends StatelessWidget {
         endTime: store.state.question.endTime
       ),
       builder: (BuildContext context, ProtobowlProgressBarViewModel viewModel) {
-        double value;
-        if (viewModel.currentTime == null || viewModel.endTime == null || viewModel.beginTime == null) {
-          value = 100;
-        } else {
-          value = (viewModel.currentTime - viewModel.beginTime) / (viewModel.endTime - viewModel.beginTime);
+        double value = 0;
+        if (viewModel.currentTime != null && viewModel.endTime != null && viewModel.beginTime != null ) {
+          if (viewModel.endTime - viewModel.beginTime == 0) value = 0;
+          else
+            value = (viewModel.currentTime - viewModel.beginTime) / (viewModel.endTime - viewModel.beginTime);
         }
         return LinearProgressIndicator(
           value: value,

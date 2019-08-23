@@ -14,4 +14,6 @@ class AttemptChatAction {}
 
 class FinishChatAction {}
 
+class RoomChangeAction {}
+
 class TypeAction {}
