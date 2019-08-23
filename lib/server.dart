@@ -3,15 +3,18 @@ import 'dart:core';
 import 'dart:math';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart' as http; // for requesting protobowl's socket
+import 'package:sqflite/sqflite.dart';
+
+import 'database.dart';
 
 
 class Server{
   final String server = "ocean.protobowl.com:80/socket.io/1/websocket/";
   IOWebSocketChannel channel;
+  Future<Database> database;
   String roomName;
   Timer timer;
   Function(Timer) timerCallback;
-  Function() serverChangeCallback;
 
   Future<IOWebSocketChannel> getChannel() async {
     final response = await http.get('http://' + server);
@@ -77,9 +80,28 @@ class Server{
     print("Pinged");
   }
 
-  void joinRoom(String room) {
-    String cookie = _randomString(41);
-//    String cookie = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  void joinRoom(String room) async {
+    String cookie;
+    // Make sure to update database information if need be
+    final Database db = await database;
+    final List<Map<String, dynamic>> objects = await db.query("rooms");
+    if (objects.isEmpty) {
+      cookie = _randomString(41);
+      final DatabaseModel model = DatabaseModel(
+          id: 0,
+          room: room,
+          cookie: cookie
+      );
+      await db.insert("rooms", model.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    } else {
+      cookie = objects[0]["cookie"];
+      final DatabaseModel model = DatabaseModel(
+        id: 0,
+        room: room,
+        cookie: cookie
+      );
+      await db.update("rooms", model.toMap(), where: "id=0");
+    }
 
     print("Cookie: $cookie");
     String joinRoom =
