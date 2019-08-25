@@ -17,10 +17,11 @@ class _ProtobowlAnswerBarState extends State<ProtobowlAnswerBar> {
             children: <Widget>[
               new Flexible(
                 child: TextField(
+                  autofocus: true,
                   controller: _answerController,
                   decoration: InputDecoration(
                       hintText: "Answer"),
-                  onChanged: (text) => server.typing(text),
+                  onChanged: (text) => server.typingAnswer(text),
                 ),
               ),
               Container(

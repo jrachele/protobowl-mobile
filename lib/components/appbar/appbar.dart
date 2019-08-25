@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutterbowl/actions/actions.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_html_view/flutter_html_text.dart';
@@ -8,29 +10,36 @@ import 'package:flutterbowl/models/models.dart';
 class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, HtmlText>(
+    return StoreConnector<AppState, ProtobowlAppBarViewModel>(
       converter: (Store<AppState> store) {
-        return store.state.state == GameState.FINISHED ?
-        _formatProtobowlAnswer(store.state.question.answer) :
-        _formatProtobowlAnswer("${store.state.question.category} | ${store.state.question.difficulty}");
+        return ProtobowlAppBarViewModel(
+            appBarText: store.state.state == GameState.FINISHED ?
+              _formatProtobowlAnswer(store.state.question.answer) :
+              _formatProtobowlAnswer("${store.state.question.category} | ${store.state.question.difficulty}"),
+            chatAction: () => store.dispatch(ChatAction())
+        );
       },
-      builder: (BuildContext context, HtmlText appBarText) {
+      builder: (BuildContext context, ProtobowlAppBarViewModel viewModel) {
         return AppBar(
-          title: appBarText,
+          title: viewModel.appBarText,
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.arrow_right),
-              tooltip: 'Next Question',
-              onPressed: server.next,
-            )
-          ],
-        );
+              icon: Icon(Icons.chat_bubble),
+              tooltip: 'Chat',
+              onPressed: viewModel.chatAction,
+            ),
+//            IconButton(
+//            icon: Icon(Icons.arrow_right),
+//                  tooltip: 'Next Question',
+//                  onPressed: server.next,
+//                )
+              ],
+            );
       }
     );
   }
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(60);
 
 }
@@ -42,4 +51,11 @@ HtmlText _formatProtobowlAnswer(String answer) {
       .replaceAll("{", "<b><i>")
       .replaceAll("}", "</i></b>");
   return HtmlText(data: answer);
+}
+
+class ProtobowlAppBarViewModel {
+  final HtmlText appBarText;
+  final Function chatAction;
+
+  ProtobowlAppBarViewModel({this.appBarText, this.chatAction});
 }

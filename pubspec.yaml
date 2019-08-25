@@ -20,13 +20,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  equatable:
   flutter_redux:
   web_socket_channel:
   http:
   redux_logging:
   flutter_html_view:
   font_awesome_flutter:
+  sqflite:
+  path:
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -30,10 +30,37 @@ Room roomReducer(AppState prev, dynamic action) {
         }
 
         return Room(
+            name: server.roomName,
             rate: jsonData["rate"].round(),
             users: jsonData["users"] ?? prev.room.users,
-            scoring: jsonData["scoring"] ?? prev.room.scoring
+            scoring: jsonData["scoring"] ?? prev.room.scoring,
+            allowMultipleBuzzes: jsonData["max_buzz"] == null,
+            allowPauseQuestions: !jsonData["no_pause"],
+            allowSkipQuestions: !jsonData["no_skip"],
         );
+      } else {
+        // If rate is null, one of the users got updated. Thanks Protobowl
+        // for writing excellent code
+        if (jsonData["users"] == null) return prev.room;
+        String singleUserName = jsonData["users"][0]["name"];
+        String singleUserID = jsonData["users"][0]["id"];
+        List<dynamic> previousUsers = prev.room.users;
+        for (var user in previousUsers) {
+          if (user["id"] == singleUserID) {
+            user["name"] = singleUserName;
+          }
+        }
+
+        return Room(
+          name: server.roomName,
+          rate: prev.room.rate,
+          users: previousUsers,
+          scoring: prev.room.scoring,
+          allowMultipleBuzzes: prev.room.allowMultipleBuzzes,
+          allowPauseQuestions: prev.room.allowPauseQuestions,
+          allowSkipQuestions: prev.room.allowSkipQuestions,
+        );
+
       }
     }
   }

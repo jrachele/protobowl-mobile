@@ -9,12 +9,34 @@ import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/reducers/reducers.dart';
 import 'package:flutterbowl/pages/protobowl.dart';
 import 'package:flutterbowl/server.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 void main() async {
+  // Establish a connection to sqlite database
+  server.database = openDatabase(
+    // Set the path to the database.
+    join(await getDatabasesPath(), 'database.db'),
+    // When the database is first created, create a table to store dogs.
+    onCreate: (db, version) {
+      // Run the CREATE TABLE statement on the database.
+      return db.execute(
+        "CREATE TABLE rooms(id INTEGER PRIMARY KEY, room TEXT, cookie TEXT)",
+      );
+    },
+// Set the version. This executes the onCreate function and provides a
+// path to perform database upgrades and downgrades.
+    version: 1,
+  );
+  final Database db = await server.database;
+  List<Map<String, dynamic>> rooms = await db.query("rooms");
+  String room = "flutterbowl";
+  if (rooms.isNotEmpty) {
+    room = rooms[0]["room"];
+  }
   // Initialize the server and get the channel asynchronously
   server.channel = await server.getChannel();
-  server.setName("billy");
-  server.joinRoom("flutterbowl");
+  server.joinRoom(room);
   runApp(new ProtobowlApp());
 }
 
@@ -40,6 +62,7 @@ class ProtobowlApp extends StatelessWidget {
     server.timerCallback = (Timer timer) => store.dispatch(TickAction());
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
+    server.finishChat = () => store.dispatch(FinishChatAction());
   }
 
   @override

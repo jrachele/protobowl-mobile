@@ -7,7 +7,7 @@ import 'package:flutterbowl/actions/actions.dart';
 
 
 bool buzzedReducer(AppState prev, dynamic action) {
-  if (action is AttemptBuzzAction) {
+  if (action is BuzzAction) {
     if (prev.state == GameState.RUNNING) {
       // We are allowed to buzz
       return true;
