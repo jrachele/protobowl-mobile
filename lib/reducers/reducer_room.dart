@@ -33,7 +33,10 @@ Room roomReducer(AppState prev, dynamic action) {
             name: server.roomName,
             rate: jsonData["rate"].round(),
             users: jsonData["users"] ?? prev.room.users,
-            scoring: jsonData["scoring"] ?? prev.room.scoring
+            scoring: jsonData["scoring"] ?? prev.room.scoring,
+            allowMultipleBuzzes: jsonData["max_buzz"] == null,
+            allowPauseQuestions: !jsonData["no_pause"],
+            allowSkipQuestions: !jsonData["no_skip"],
         );
       } else {
         // If rate is null, one of the users got updated. Thanks Protobowl
@@ -53,6 +56,9 @@ Room roomReducer(AppState prev, dynamic action) {
           rate: prev.room.rate,
           users: previousUsers,
           scoring: prev.room.scoring,
+          allowMultipleBuzzes: prev.room.allowMultipleBuzzes,
+          allowPauseQuestions: prev.room.allowPauseQuestions,
+          allowSkipQuestions: prev.room.allowSkipQuestions,
         );
 
       }

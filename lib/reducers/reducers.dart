@@ -1,7 +1,7 @@
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 import 'package:flutterbowl/reducers/reducer_question.dart';
-import 'package:flutterbowl/reducers/reducer_player.dart';
+import 'package:flutterbowl/reducers/reducer_user.dart';
 import 'package:flutterbowl/reducers/reducer_questiontime.dart';
 import 'package:flutterbowl/reducers/reducer_gamestate.dart';
 import 'package:flutterbowl/reducers/reducer_room.dart';

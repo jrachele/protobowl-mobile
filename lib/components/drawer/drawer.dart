@@ -6,7 +6,7 @@ import 'package:flutterbowl/models/models.dart';
 
 import 'leaderboard.dart';
 import 'user.dart';
-import 'room.dart';
+import 'package:flutterbowl/components/drawer/room/room.dart';
 
 class ProtobowlDrawer extends StatelessWidget {
   @override
