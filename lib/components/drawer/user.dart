@@ -16,7 +16,7 @@ class UserView extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(child: Icon(FontAwesomeIcons.passport),
+                  Container(child: Icon(FontAwesomeIcons.solidUser),
                   margin: EdgeInsets.fromLTRB(0, 0, 32, 0),),
                   Expanded(
                     child: Container(

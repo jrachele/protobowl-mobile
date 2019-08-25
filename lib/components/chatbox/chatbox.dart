@@ -18,7 +18,7 @@ class ProtobowlChatBox extends StatelessWidget {
         builder: (BuildContext context, Chatbox chatbox) {
           return Expanded(
               child: new Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Container(
                     child: new Padding(
                       padding: const EdgeInsets.all(8.0),

@@ -40,6 +40,7 @@ List<Widget> _createUserWidgets(ProtobowlLeaderboardViewModel viewModel) {
   // Protobowl makes you calculate points client side, so we are taking care of that
   for (var user in users) {
     user["points"] = _calculateScore(viewModel.room.scoring, user["corrects"], user["wrongs"]);
+    user["negs"] = _calculateNegs(user["wrongs"]);
   }
   // Sort the list in descending order
   users.sort((lhs, rhs){
@@ -57,26 +58,36 @@ List<Widget> _createUserWidgets(ProtobowlLeaderboardViewModel viewModel) {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                        child: Icon(FontAwesomeIcons.portrait,
-                            color: user["online_state"] ? Colors.blue : Colors.black26
+                        child:
+                        Text(
+                        " ${user["points"]} ",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            backgroundColor: user["online_state"] ?
+                            (viewModel.player.userID == user["id"] ? Colors.green : Colors.blue)
+                                : Colors.black26,
+                            ),
                         ),
+//                        Icon(FontAwesomeIcons.portrait,
+//                            color: user["online_state"] ? Colors.blue : Colors.black26
+//                        ),
                         margin: EdgeInsets.fromLTRB(0, 0, 16, 0)
                     ),
                     Expanded(
                       child: Container(
                         child: Text("${user["name"]}",
-                            style: user["online_state"] ? (
-                                viewModel.player.userID == user["id"] ?
-                                _currentUser : _activeUser
-                            ) : _offlineUser,
+                            style: user["online_state"] ?
+                                _activeUser : _offlineUser,
                             overflow: TextOverflow.fade,
                             softWrap: false
                         ),
                       ),
                     ),
                     Container(
-                        child: Text("Pts: ${user["points"]}",
-                            style: _activeUser,
+                        child: Text("Negs: ${user["negs"]}",
+                            style: user["online_state"] ?
+                            _activeUser : _offlineUser,
                             overflow: TextOverflow.fade
                         ),
                         margin: EdgeInsets.fromLTRB(16, 0, 0, 0)
@@ -104,11 +115,6 @@ TextStyle _activeUser = TextStyle(
   fontSize: 16,
 );
 
-TextStyle _currentUser = TextStyle(
-  fontSize: 16,
-  color: Colors.amber
-);
-
 TextStyle _offlineUser = TextStyle(
   fontSize: 16,
   color: Colors.black26
@@ -128,6 +134,11 @@ int _calculateScore(Map<String, dynamic> scoring, Map<String, dynamic> corrects,
 
   return score;
 }
+
+int _calculateNegs(Map<String, dynamic> wrongs) {
+  return (wrongs["interrupt"] ?? 0) + (wrongs["early"] ?? 0);
+}
+
 class ProtobowlLeaderboardViewModel {
   final Room room;
   final Player player;

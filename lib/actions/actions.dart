@@ -6,14 +6,11 @@ class ReceivePacketAction {
 
 class TickAction {}
 
-class AttemptBuzzAction {}
+class BuzzAction {}
 
-class FinishBuzzAction {}
-
-class AttemptChatAction {}
+class ChatAction {}
 
 class FinishChatAction {}
 
 class RoomChangeAction {}
 
-class TypeAction {}

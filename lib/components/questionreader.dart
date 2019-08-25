@@ -6,7 +6,7 @@ import 'package:flutterbowl/server.dart';
 import 'package:flutterbowl/models/models.dart';
 
 class ProtobowlQuestionReader extends StatelessWidget {
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = new ScrollController();
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, ProtobowlQuestionReaderViewModel>(

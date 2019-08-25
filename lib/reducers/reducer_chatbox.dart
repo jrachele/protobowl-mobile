@@ -58,7 +58,7 @@ Chatbox chatBoxReducer(AppState prev, dynamic action) {
               prompt: jsonData["prompt"]
             );
           } else {
-            String name = "A user";
+            String name = "A player";
             if (prev.room.users != null) {
               Iterable<dynamic> potentialUsers = prev.room.users.where((user) => user["id"] == jsonData["user"]);
               if (potentialUsers.isNotEmpty) {
@@ -75,38 +75,26 @@ Chatbox chatBoxReducer(AppState prev, dynamic action) {
             );
           }
         } else if (jsonData["name"] == "log") {
-          String name = "A user";
+          jsonData = jsonData["args"][0];
+          String name = "A player";
           // When you join a room in protobowl, a log shows up first, before
           // the username is actually known. So we must update the log if the
           // name is not there
           bool userNameExists = false;
           if (prev.room.users != null) {
-            List<dynamic> potentialUsers = prev.room.users.where((user) => user["id"] == jsonData["user"]);
+            Iterable<dynamic> potentialUsers = prev.room.users.where((user) => user["id"] == jsonData["user"]);
             if (potentialUsers.isNotEmpty) {
               name = potentialUsers.first["name"];
               userNameExists = true;
             }
           }
-          jsonData = jsonData["args"][0];
-          messages[jsonData["user"]] = LogMessage(
-           complete: userNameExists,
+
+          messages[jsonData["time"].toString()] = LogMessage(
            message: jsonData["verb"],
            name: name,
           );
-        } else if (jsonData["name"] == "joined") {
-          // Update a previous log message instance where the username was not updated
-          jsonData = jsonData["args"][0];
-          if (messages[jsonData["id"]] != null) {
-            var logMessage = messages[jsonData["id"]];
-            if (!logMessage.complete) {
-              messages[jsonData["id"]] = LogMessage(
-                complete: true,
-                message: logMessage.message,
-                name: jsonData["name"],
-              );
-            }
-          }
-        } else {
+        }
+        else {
           return prev.chatbox;
         }
 

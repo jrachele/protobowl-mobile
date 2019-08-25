@@ -15,6 +15,7 @@ class Server{
   String roomName;
   Timer timer;
   Function(Timer) timerCallback;
+  Function() finishChat;
 
   Future<IOWebSocketChannel> getChannel() async {
     final response = await http.get('http://' + server);
@@ -31,11 +32,19 @@ class Server{
     }
   }
 
-  void typing(String text) {
+  void typingAnswer(String text) {
     if (channel != null) {
       String answer = '5:::{"name":"guess","args":[{"text":"'
           '$text","done":false},null]}';
       channel.sink.add(answer);
+    }
+  }
+
+  void typingMessage(String text, String session, bool done) {
+    if (channel != null) {
+      String message = '5:::{"name":"chat","args":[{"text":'
+          '"$text","session":"$session","first":false,"done":$done},null]}';
+      channel.sink.add(message);
     }
   }
 
@@ -86,7 +95,7 @@ class Server{
     final Database db = await database;
     final List<Map<String, dynamic>> objects = await db.query("rooms");
     if (objects.isEmpty) {
-      cookie = _randomString(41);
+      cookie = randomString(41);
       final DatabaseModel model = DatabaseModel(
           id: 0,
           room: room,
@@ -113,7 +122,7 @@ class Server{
     this.roomName = room;
   }
 
-  String _randomString(int len) {
+  String randomString(int len) {
     final alpha =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ";
     var str = '';

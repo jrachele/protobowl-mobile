@@ -62,6 +62,7 @@ class ProtobowlApp extends StatelessWidget {
     server.timerCallback = (Timer timer) => store.dispatch(TickAction());
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
+    server.finishChat = () => store.dispatch(FinishChatAction());
   }
 
   @override

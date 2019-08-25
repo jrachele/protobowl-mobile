@@ -37,35 +37,38 @@ class RoomView extends StatelessWidget {
         FontAwesomeIcons.doorOpen,
         ),
         children: <Widget>[
-          ListTile(
-              title:
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(child: Icon(FontAwesomeIcons.passport),
-                    margin: EdgeInsets.fromLTRB(0, 0, 32, 0),),
-                  Expanded(
-                    child: Container(
-                      child: Text("${viewModel.room.name}", style: TextStyle(fontSize: 18),
-                          overflow: TextOverflow.fade,
-                          softWrap: false),
-                    ),
-                  ),
-                  Container(
-                      child: IconButton(
-                        icon: Icon(FontAwesomeIcons.pen,
-                            size: 16),
-                        onPressed: () async {
-                          server.channel.sink.close();
-                          server.channel = await server.getChannel();
-                          server.joinRoom(await _asyncInputDialog(context));
-                          viewModel.roomChange();
-                        },
+
+          Card(
+            child: ListTile(
+                title:
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(child: Icon(FontAwesomeIcons.users),
+                      margin: EdgeInsets.fromLTRB(0, 0, 32, 0),),
+                    Expanded(
+                      child: Container(
+                        child: Text("${viewModel.room.name}", style: TextStyle(fontSize: 18),
+                            overflow: TextOverflow.fade,
+                            softWrap: false),
                       ),
-                      margin: EdgeInsets.fromLTRB(32, 0, 0, 0)
-                  )
-                ],
-              )
+                    ),
+                    Container(
+                        child: IconButton(
+                          icon: Icon(FontAwesomeIcons.pen,
+                              size: 16),
+                          onPressed: () async {
+                            server.channel.sink.close();
+                            server.channel = await server.getChannel();
+                            server.joinRoom(await _asyncInputDialog(context));
+                            viewModel.roomChange();
+                          },
+                        ),
+                        margin: EdgeInsets.fromLTRB(32, 0, 0, 0)
+                    )
+                  ],
+                )
+            ),
           ),
 
         ],

@@ -8,6 +8,7 @@ import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 
 import 'answerbar.dart';
+import 'chatbar.dart';
 
 class ProtobowlBuzzer extends StatelessWidget {
   @override
@@ -17,10 +18,15 @@ class ProtobowlBuzzer extends StatelessWidget {
         state: store.state.state,
         qid: store.state.question.qid,
         localBuzz: store.state.buzzed,
-        callback: () => store.dispatch(AttemptBuzzAction())
+        chatting: store.state.chatting,
+        callback: () => store.dispatch(BuzzAction())
       ),
       builder: (BuildContext context, BuzzViewmodel viewmodel) {
-        if (viewmodel.state == GameState.RUNNING) {
+        // Chatting gets priority since it is not the default state
+        if (viewmodel.chatting == true) {
+          return ProtobowlChatBar();
+        }
+        else if (viewmodel.state == GameState.RUNNING) {
           // We are able to buzz
           return Row(
             children: <Widget>[
@@ -92,6 +98,7 @@ class BuzzViewmodel {
   final GameState state;
   final String qid;
   final bool localBuzz;
+  final bool chatting;
   final Function callback;
-  BuzzViewmodel({this.state, this.qid, this.callback, this.localBuzz});
+  BuzzViewmodel({this.state, this.qid, this.callback, this.localBuzz, this.chatting});
 }
