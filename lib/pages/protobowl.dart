@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterbowl/components/chatbox/chatbox.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutterbowl/server.dart';
@@ -26,6 +27,7 @@ class _ProtobowlPageState extends State<ProtobowlPage> {
             children: <Widget>[
               ProtobowlProgressBar(),
               ProtobowlQuestionReader(),
+              ProtobowlChatBox(),
               ProtobowlBuzzer()
         ]
         ),

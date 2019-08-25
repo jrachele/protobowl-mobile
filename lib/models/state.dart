@@ -11,9 +11,7 @@ class AppState {
   final Question question;
   final Room room;
   final Player player;
-//  final Player player;
-//  final Room room;
-
+  final Chatbox chatbox;
   final int questionTime;
   final bool buzzed;
 
@@ -22,6 +20,7 @@ class AppState {
         this.question,
         this.room,
         this.player,
+        this.chatbox,
         this.questionTime,
         this.buzzed
 //        this.player = Player.blank,
@@ -36,6 +35,7 @@ class AppState {
         rate: 60
       ),
       player: Player(),
+      chatbox: Chatbox(),
       questionTime: 0,
       buzzed: false
     );

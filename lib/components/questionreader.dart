@@ -6,6 +6,7 @@ import 'package:flutterbowl/server.dart';
 import 'package:flutterbowl/models/models.dart';
 
 class ProtobowlQuestionReader extends StatelessWidget {
+  ScrollController _scrollController = new ScrollController();
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, ProtobowlQuestionReaderViewModel>(
@@ -29,8 +30,9 @@ class ProtobowlQuestionReader extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: new SingleChildScrollView(
                               scrollDirection: Axis.vertical,
+                              controller: _scrollController,
                               child: new Text( // answer text
-                                  viewModel.calculateVisibleWords(),
+                                  viewModel.calculateVisibleWords(_scrollController),
                                   style: new TextStyle(fontSize: 18.0)
                               )
                           )
@@ -39,6 +41,7 @@ class ProtobowlQuestionReader extends StatelessWidget {
                       )
                   )
               ),
+              flex: 2
             );
         }
         );
@@ -55,13 +58,31 @@ class ProtobowlQuestionReaderViewModel {
 
   ProtobowlQuestionReaderViewModel({ this.question, this.timings, this.beginTime, this.currentTime, this.endTime, this.rate});
 
-  String calculateVisibleWords() {
+  String calculateVisibleWords(ScrollController controller) {
     if (timings == null) return "";
     // Walk up the timings until we are at the index of the word in the question
     int i = 0;
     for (int t = beginTime; i < timings.length && t < currentTime; i++) {
       t += (timings[i] as int)*rate;
     }
+
+
+    // Side effect to make the scroll view adapt to the size of the question
+    // but only when the widget is done building and when the question is currently
+    // being read
+    if (i < timings.length-1) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((_){
+        if (controller.hasClients) {
+          controller.animateTo(
+            controller.position.maxScrollExtent,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 100),
+          );
+        }
+      });
+    }
+
     return question.split(" ").sublist(0, i).join(" ");
   }
 }

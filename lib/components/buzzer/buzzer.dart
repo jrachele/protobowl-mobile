@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_html_view/flutter_html_text.dart';
@@ -26,9 +27,16 @@ class ProtobowlBuzzer extends StatelessWidget {
               Expanded(
                 child: MaterialButton(
                     height: 48.0,
-                    color: Colors.blue,
+                    color: Colors.red,
                     textColor: Colors.white,
-                    child: new Text("Buzz in", style: new TextStyle(fontSize: 18.0),),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(child: Icon(FontAwesomeIcons.bell, color: Colors.white),
+                        margin: EdgeInsets.fromLTRB(0, 0, 8, 0),),
+                        Text("Buzz in", style: new TextStyle(fontSize: 18.0),),
+                      ],
+                    ),
                     onPressed: () {
                       viewmodel.callback();
                       server.buzz(viewmodel.qid);
@@ -46,7 +54,7 @@ class ProtobowlBuzzer extends StatelessWidget {
               Expanded(
                 child: new MaterialButton(
                   height: 48.0,
-                  color: Colors.green,
+                  color: Colors.blue,
                   textColor: Colors.white,
                   child: new Text("Next Question", style: new TextStyle(fontSize: 18.0),),
                   onPressed: () => server.next(),
