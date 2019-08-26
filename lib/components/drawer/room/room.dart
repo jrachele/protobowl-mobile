@@ -69,10 +69,22 @@ class RoomView extends StatelessWidget {
                           margin: EdgeInsets.fromLTRB(32, 0, 0, 0))
                     ],
                   ),
+                  Divider(),
                   RateSlider(),
+                  Divider(),
                   CheckboxMultipleBuzz(),
                   CheckboxSkip(),
                   CheckboxPause(),
+                  Divider(),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 8, 0, 16),
+                    child: FloatingActionButton.extended(
+                      backgroundColor: Colors.redAccent,
+                      onPressed: server.resetScore,
+                      icon: Icon(FontAwesomeIcons.trash),
+                      label: Text("Reset my score"),
+                    ),
+                  ),
                 ],
               )),
         ],

@@ -18,6 +18,7 @@ class _ProtobowlAnswerBarState extends State<ProtobowlAnswerBar> {
               new Flexible(
                 child: TextField(
                   autofocus: true,
+                  autocorrect: false,
                   controller: _answerController,
                   decoration: InputDecoration(
                       hintText: "Answer"),

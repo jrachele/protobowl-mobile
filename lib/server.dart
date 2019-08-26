@@ -78,11 +78,19 @@ class Server{
       channel.sink.add(setSkipping);
     }
   }
+
   void setPausing(bool pausing) {
     if (channel != null) {
       String setPaused = '5:::{"name":"set_pause",'
           '"args":[$pausing,null]}';
       channel.sink.add(setPaused);
+    }
+  }
+
+  void resetScore() {
+    if (channel != null) {
+      String reset = '5:::{"name":"reset_score","args":[null,null]}';
+      channel.sink.add(reset);
     }
   }
 

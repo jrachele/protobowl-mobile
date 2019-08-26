@@ -16,7 +16,14 @@ class LeaderboardView extends StatelessWidget {
           return ExpansionTile(
             title: Text("Leaderboard", style: TextStyle(fontSize: 18)),
             leading: Icon(FontAwesomeIcons.list),
-            children: _createUserWidgets(viewModel),
+            children: <Widget>[
+              Card(
+                  margin: EdgeInsets.all(16),
+                  child: Column (
+                    children: _createUserWidgets(viewModel),
+                  ),
+              ) ,
+            ],
           );
         });
   }
@@ -44,9 +51,8 @@ List<Widget> _createUserWidgets(ProtobowlLeaderboardViewModel viewModel) {
   // populate the list with respect to online users first, then call the same
   // builder on the offline users to keep them separated for the user
   void _adduser(Map<String, dynamic> user) {
-    children.add(Card(
-        child: ListTile(
-            title: Row(
+    children.add(ListTile(
+        title: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
@@ -80,7 +86,7 @@ List<Widget> _createUserWidgets(ProtobowlLeaderboardViewModel viewModel) {
                 overflow: TextOverflow.fade),
             margin: EdgeInsets.fromLTRB(16, 0, 0, 0))
       ],
-    ))));
+    )));
   }
 
   for (var user in users.where((user) => user["online_state"])) {

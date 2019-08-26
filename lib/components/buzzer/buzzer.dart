@@ -14,83 +14,90 @@ class ProtobowlBuzzer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, BuzzViewmodel>(
-      converter: (Store<AppState> store) => BuzzViewmodel(
-        state: store.state.state,
-        qid: store.state.question.qid,
-        localBuzz: store.state.buzzed,
-        chatting: store.state.chatting,
-        callback: () => store.dispatch(BuzzAction())
-      ),
-      builder: (BuildContext context, BuzzViewmodel viewmodel) {
-        // Chatting gets priority since it is not the default state
-        if (viewmodel.chatting == true) {
-          return ProtobowlChatBar();
-        }
-        else if (viewmodel.state == GameState.RUNNING) {
-          // We are able to buzz
-          return Row(
-            children: <Widget>[
-              Expanded(
-                child: MaterialButton(
-                    height: 48.0,
-                    color: Colors.red,
-                    textColor: Colors.white,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(child: Icon(FontAwesomeIcons.bell, color: Colors.white),
-                        margin: EdgeInsets.fromLTRB(0, 0, 8, 0),),
-                        Text("Buzz in", style: new TextStyle(fontSize: 18.0),),
-                      ],
+        converter: (Store<AppState> store) => BuzzViewmodel(
+            state: store.state.state,
+            qid: store.state.question.qid,
+            localBuzz: store.state.buzzed,
+            chatting: store.state.chatting,
+            callback: () => store.dispatch(BuzzAction())),
+        builder: (BuildContext context, BuzzViewmodel viewmodel) {
+          // Chatting gets priority since it is not the default state
+          if (viewmodel.chatting == true) {
+            return ProtobowlChatBar();
+          } else if (viewmodel.state == GameState.RUNNING) {
+            // We are able to buzz
+            return Container(
+              margin: EdgeInsets.all(16),
+              child: Row(
+                children: <Widget>[
+                  // Buzz button
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                      child: FloatingActionButton.extended(
+                          backgroundColor: Colors.red,
+                          icon: Icon(FontAwesomeIcons.bell),
+                          label: Text("Buzz in", style: TextStyle(fontSize: 18)),
+                          onPressed: () {
+                            viewmodel.callback();
+                            server.buzz(viewmodel.qid);
+                          }),
                     ),
-                    onPressed: () {
-                      viewmodel.callback();
-                      server.buzz(viewmodel.qid);
-                    }
-
-                ),
+                    flex: 2,
+                  ),
+                  Expanded(
+                    child: FloatingActionButton.extended(
+                      backgroundColor: Colors.black26,
+                      disabledElevation: 0,
+                      icon: Icon(FontAwesomeIcons.arrowCircleRight),
+                      label: Text("Next"),
+                      onPressed: null,
+                    ),
+                  )
+                ],
               ),
-            ],
-          );
-        } else if (viewmodel.state == GameState.FINISHED ||
-            viewmodel.state == GameState.IDLE) {
-          // The question has already been read, so the button will move to next question
-          return Row(
-            children: <Widget>[
-              Expanded(
-                child: new MaterialButton(
-                  height: 48.0,
-                  color: Colors.blue,
-                  textColor: Colors.white,
-                  child: new Text("Next Question", style: new TextStyle(fontSize: 18.0),),
-                  onPressed: () => server.next(),
-                ),
+            );
+          } else if (viewmodel.state == GameState.FINISHED ||
+              viewmodel.state == GameState.IDLE ||
+              (viewmodel.state == GameState.BUZZED &&
+                  viewmodel.localBuzz == false)) {
+            // Someone beat you to the buzzer OR the question is over.
+            return Container(
+              margin: EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  // Buzz button
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                      child: FloatingActionButton.extended(
+                        backgroundColor: Colors.black26,
+                        disabledElevation: 0,
+                        icon: Icon(FontAwesomeIcons.bell),
+                        label: Text("Buzz in", style: TextStyle(fontSize: 18)),
+                        onPressed: null,
+                      ),
+                    ),
+                    flex: 2,
+                  ),
+                  Expanded(
+                    child: FloatingActionButton.extended(
+                      icon: Icon(FontAwesomeIcons.arrowCircleRight),
+                      label: Text("Next"),
+                      onPressed: server.next,
+                    ),
+                  )
+                ],
               ),
-            ],
-          );
-        } else if (viewmodel.state == GameState.BUZZED && viewmodel.localBuzz == false) {
-          // Someone beat you to the buzzer.
-          return Row(
-            children: <Widget>[
-              Expanded(
-                child: MaterialButton(
-                    height: 48.0,
-                    disabledColor: Colors.black45,
-                    disabledTextColor: Colors.white,
-                    child: new Text("Buzz in", style: new TextStyle(fontSize: 18.0),),
-                    onPressed: null
-                ),
-              ),
-            ],
-          );
-        } else if (viewmodel.localBuzz == true) {
-          // Render the answer bar
-          return ProtobowlAnswerBar();
-        }
-        // I am leaving null here for debug purposes
-        return null;
-      }
-    );
+            );
+          } else if (viewmodel.localBuzz == true) {
+            // Render the answer bar
+            return ProtobowlAnswerBar();
+          }
+          // I am leaving null here for debug purposes
+          return null;
+        });
   }
 }
 
@@ -100,5 +107,6 @@ class BuzzViewmodel {
   final bool localBuzz;
   final bool chatting;
   final Function callback;
-  BuzzViewmodel({this.state, this.qid, this.callback, this.localBuzz, this.chatting});
+  BuzzViewmodel(
+      {this.state, this.qid, this.callback, this.localBuzz, this.chatting});
 }
