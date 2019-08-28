@@ -8,7 +8,7 @@ import 'package:flutterbowl/actions/actions.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/reducers/reducers.dart';
 import 'package:flutterbowl/pages/protobowl.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -63,6 +63,22 @@ class ProtobowlApp extends StatelessWidget {
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
     server.finishChat = () => store.dispatch(FinishChatAction());
+    server.refreshServer = ({String room}) {
+      // When changing rooms, a new socket has to be fetched
+      // otherwise Protobowl will count you as a zombie
+      if (room != null) {
+        server.joinRoom(room);
+      } else {
+        server.joinRoom(store.state.room.name);
+      }
+      store.dispatch(RoomChangeAction());
+      server.channel.stream.listen((packet) {
+        // Always ping when receiving a packet
+        server.ping();
+        debugPrint(packet);
+        store.dispatch(ReceivePacketAction(packet));
+      });
+    };
   }
 
   @override

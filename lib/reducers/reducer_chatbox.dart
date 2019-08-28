@@ -2,12 +2,12 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:async';
 import 'package:redux/redux.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 
 
-Chatbox chatBoxReducer(AppState prev, dynamic action) {
+MessageWindow chatBoxReducer(AppState prev, dynamic action) {
   if (action is ReceivePacketAction) {
     String packet = action.packet;
 
@@ -99,7 +99,7 @@ Chatbox chatBoxReducer(AppState prev, dynamic action) {
         }
 
         // Now that we have the children, we have the chatbox.
-        return Chatbox(
+        return MessageWindow(
             messages: messages
         );
       }

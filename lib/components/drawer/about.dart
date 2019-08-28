@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 
 class AboutView extends StatelessWidget {

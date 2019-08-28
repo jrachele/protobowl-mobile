@@ -6,7 +6,7 @@ import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart' as http; // for requesting protobowl's socket
 import 'package:sqflite/sqflite.dart';
 
-import 'database.dart';
+import 'package:flutterbowl/server/database.dart';
 
 
 class Server{
@@ -17,6 +17,7 @@ class Server{
   Timer timer;
   Function(Timer) timerCallback;
   Function() finishChat;
+  Function({String room}) refreshServer;
 
   Future<IOWebSocketChannel> getChannel() async {
     final response = await http.get('http://' + server);
@@ -84,6 +85,22 @@ class Server{
       String setPaused = '5:::{"name":"set_pause",'
           '"args":[$pausing,null]}';
       channel.sink.add(setPaused);
+    }
+  }
+
+  void setCategory(String category) {
+    if (channel != null) {
+      String setCategory = '5:::{"name":"set_category",'
+          '"args":["$category",null]}';
+      channel.sink.add(setCategory);
+    }
+  }
+
+  void setDifficulty(String difficulty) {
+    if (channel != null) {
+      String setDifficulty = '5:::{"name":"set_difficulty",'
+          '"args":["$difficulty",null]}';
+      channel.sink.add(setDifficulty);
     }
   }
 

@@ -5,17 +5,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_html_view/flutter_html_text.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 
-class ProtobowlChatBox extends StatelessWidget {
+class ProtobowlMessageWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, Chatbox>(
+    return StoreConnector<AppState, MessageWindow>(
         converter: (Store<AppState> store) {
           return store.state.chatbox;
         },
-        builder: (BuildContext context, Chatbox chatbox) {
+        builder: (BuildContext context, MessageWindow chatbox) {
           return Expanded(
               child: new Padding(
                   padding: const EdgeInsets.all(0.0),
@@ -23,7 +23,7 @@ class ProtobowlChatBox extends StatelessWidget {
                     child: new Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListView(
-                          children: _parseChatbox(chatbox)),
+                          children: _parseMessageWindow(chatbox)),
                     ),
 
 
@@ -37,9 +37,9 @@ class ProtobowlChatBox extends StatelessWidget {
   }
 }
 
-List<Widget> _parseChatbox(Chatbox chatbox) {
-  if (chatbox == null) return List();
-  LinkedHashMap<String, Message> messages = chatbox.messages;
+List<Widget> _parseMessageWindow(MessageWindow window) {
+  if (window == null) return List();
+  LinkedHashMap<String, Message> messages = window.messages;
   if (messages == null) return List();
   List<Widget> children = List<Widget>();
   Icon _determineIcon(Message message) {

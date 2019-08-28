@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:redux/redux.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 
@@ -37,6 +37,8 @@ Room roomReducer(AppState prev, dynamic action) {
             allowMultipleBuzzes: jsonData["max_buzz"] == null,
             allowPauseQuestions: !jsonData["no_pause"],
             allowSkipQuestions: !jsonData["no_skip"],
+            category: jsonData["category"],
+            difficulty: jsonData["difficulty"]
         );
       } else {
         // If rate is null, one of the users got updated. Thanks Protobowl
@@ -59,6 +61,8 @@ Room roomReducer(AppState prev, dynamic action) {
           allowMultipleBuzzes: prev.room.allowMultipleBuzzes,
           allowPauseQuestions: prev.room.allowPauseQuestions,
           allowSkipQuestions: prev.room.allowSkipQuestions,
+          category: prev.room.category,
+          difficulty: prev.room.difficulty
         );
 
       }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbowl/components/buzzer/next.dart';
-import 'package:flutterbowl/components/chatbox/chatbox.dart';
+import 'package:flutterbowl/components/messaging/messaging.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/components/appbar/appbar.dart';
 import 'package:flutterbowl/components/appbar/progressbar.dart';
@@ -17,7 +17,7 @@ class ProtobowlPage extends StatefulWidget {
 }
 
 
-class _ProtobowlPageState extends State<ProtobowlPage> {
+class _ProtobowlPageState extends State<ProtobowlPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
 
@@ -28,7 +28,7 @@ class _ProtobowlPageState extends State<ProtobowlPage> {
             children: <Widget>[
               ProtobowlProgressBar(),
               ProtobowlQuestionReader(),
-              ProtobowlChatBox(),
+              ProtobowlMessageWindow(),
               ProtobowlBuzzer()
         ]
         ),
@@ -37,8 +37,26 @@ class _ProtobowlPageState extends State<ProtobowlPage> {
   }
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  // This ensures that the connection to the server is broken when the app is closed
+  @override
   void dispose() {
     server.channel.sink.close();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  // This prevents the user being stuck with no server connection
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      server.channel.sink.close();
+      server.channel = await server.getChannel();
+      server.refreshServer();
+    }
   }
 }

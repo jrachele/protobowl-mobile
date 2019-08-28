@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:redux/redux.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 

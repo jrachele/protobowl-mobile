@@ -1,9 +1,9 @@
 import 'dart:collection';
 
-class Chatbox {
+class MessageWindow {
   final LinkedHashMap<String, Message> messages;
 
-  Chatbox({this.messages});
+  MessageWindow({this.messages});
 }
 
 class Message {

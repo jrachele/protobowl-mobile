@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 
 
 class ProtobowlAnswerBar extends StatefulWidget {
