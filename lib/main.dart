@@ -12,6 +12,8 @@ import 'package:flutterbowl/server/server.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import 'server/socket.dart';
+
 void main() async {
   // Establish a connection to sqlite database
   server.database = openDatabase(
@@ -34,9 +36,9 @@ void main() async {
   if (rooms.isNotEmpty) {
     room = rooms[0]["room"];
   }
-  // Initialize the server and get the channel asynchronously
-  server.channel = await server.getChannel();
-  server.joinRoom(room);
+  server.socket = Socket();
+  server.socket.io(server.server);
+  server.socket.onConnected(() => server.joinRoom(room));
   runApp(new ProtobowlApp());
 }
 
@@ -53,12 +55,13 @@ class ProtobowlApp extends StatelessWidget {
 
   ProtobowlApp() {
     // Mess with the Feng-shui of Redux because we are forced to
-    server.channel.stream.listen((packet){
-      // Always ping when receiving a packet
-      server.ping();
-      debugPrint(packet);
-      store.dispatch(ReceivePacketAction(packet));
-    });
+//    server.channel.stream.listen((packet){
+//      // Always ping when receiving a packet
+//      server.ping();
+//      debugPrint(packet);
+//      store.dispatch(ReceivePacketAction(packet));
+//    });
+    
     server.timerCallback = (Timer timer) => store.dispatch(TickAction());
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
@@ -72,12 +75,12 @@ class ProtobowlApp extends StatelessWidget {
         server.joinRoom(store.state.room.name);
       }
       store.dispatch(RoomChangeAction());
-      server.channel.stream.listen((packet) {
-        // Always ping when receiving a packet
-        server.ping();
-        debugPrint(packet);
-        store.dispatch(ReceivePacketAction(packet));
-      });
+//      server.channel.stream.listen((packet) {
+//        // Always ping when receiving a packet
+//        server.ping();
+//        debugPrint(packet);
+//        store.dispatch(ReceivePacketAction(packet));
+//      });
     };
   }
 

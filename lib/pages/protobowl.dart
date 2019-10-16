@@ -45,7 +45,7 @@ class _ProtobowlPageState extends State<ProtobowlPage> with WidgetsBindingObserv
   // This ensures that the connection to the server is broken when the app is closed
   @override
   void dispose() {
-    server.channel.sink.close();
+//    server.channel.sink.close();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -54,9 +54,9 @@ class _ProtobowlPageState extends State<ProtobowlPage> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
-      server.channel.sink.close();
-      server.channel = await server.getChannel();
-      server.refreshServer();
+//      server.channel.sink.close();
+//      server.channel = await server.getChannel();
+//      server.refreshServer();
     }
   }
 }

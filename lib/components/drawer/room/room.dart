@@ -53,8 +53,8 @@ class RoomView extends StatelessWidget {
                             icon: Icon(FontAwesomeIcons.pen, size: 16),
                             onPressed: () async {
                               String room = await _asyncInputDialog(context);
-                              server.channel.sink.close();
-                              server.channel = await server.getChannel();
+//                              server.channel.sink.close();
+//                              server.channel = await server.getChannel();
                               server.refreshServer(room: room);
                             },
                           ),
