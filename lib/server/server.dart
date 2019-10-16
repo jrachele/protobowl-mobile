@@ -13,7 +13,7 @@ import 'socket.dart';
 
 
 class Server {
-  final String server = "https://ocean.protobowl.com/";
+  final String server = "http://ocean.protobowl.com/";
   Socket socket;
   Future<Database> database;
   String roomName;

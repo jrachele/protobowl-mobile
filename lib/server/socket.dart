@@ -13,7 +13,7 @@ class Socket {
   }
   String server = "https://ocean.protobowl.com/";
 
-  Future<void> io(String server) async {
+  Future<bool> io(String server) async {
     bool secure = false;
     String domain;
     if (server.startsWith("https://")) {
@@ -23,7 +23,7 @@ class Socket {
       secure = false;
       domain = server.substring(7);
     } else {
-      throw Exception("Invalid server URL");
+      return false;
     }
 
     if (!server.endsWith("/")) {
@@ -32,7 +32,13 @@ class Socket {
     this.server = server;
     // Contact the server for the socket id
     String serverConnection = server + "socket.io/?EIO=$EIO_VERSION&transport=polling";
-    final response = await http.get(serverConnection);
+    var response = await http.get(serverConnection).timeout(const Duration(milliseconds: 5000), onTimeout: () {
+      return null;
+    });
+    if (response == null) {
+      print("No response from $serverConnection");
+      return false;
+    }
     String responseJSON = "{" + response.body.split('{')[1];
     responseJSON = responseJSON.substring(0, responseJSON.length-4);
     var decodedJSON = json.decode(responseJSON);
@@ -55,6 +61,7 @@ class Socket {
     _probe();
     channel.stream?.listen(_onMessageReceived);
     Timer.periodic(Duration(milliseconds: 3000), (timer) => _ping());
+    return channel != null;
   }
 
   void refresh() {

@@ -7,11 +7,12 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutterbowl/actions/actions.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/reducers/reducers.dart';
-import 'package:flutterbowl/pages/protobowl.dart';
 import 'package:flutterbowl/server/server.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import 'pages/protobowl.dart';
+import 'pages/error.dart';
 import 'server/socket.dart';
 
 void main() async {
@@ -38,11 +39,12 @@ void main() async {
   }
   // Connect to Socket.io server
   server.socket = Socket();
-  server.socket.io(server.server);
+  bool connected = await server.socket.io(server.server);
+//  print(connected);
   server.socket.onConnected(() {
     server.joinRoom(room);
   });
-  runApp(new ProtobowlApp());
+  runApp(new ProtobowlApp(connected));
 }
 
 
@@ -53,10 +55,11 @@ class ProtobowlApp extends StatelessWidget {
   initialState: AppState.initial(),
 //    middleware: [LoggingMiddleware.printer()]
   );
+  final bool connected;
 
 //  final TextEditingController answerController = TextEditingController();
 
-  ProtobowlApp() {
+  ProtobowlApp(this.connected) {
     // In this constructor, we will set up all callbacks to the socket
     // as well as timers
 
@@ -88,18 +91,15 @@ class ProtobowlApp extends StatelessWidget {
     server.refreshServer = ({String room}) {
       // When changing rooms, a new socket has to be fetched
       // otherwise Protobowl will count you as a zombie
-      if (room != null) {
-        server.joinRoom(room);
-      } else {
-        server.joinRoom(store.state.room.name);
-      }
-      store.dispatch(RoomChangeAction());
-//      server.channel.stream.listen((packet) {
-//        // Always ping when receiving a packet
-//        server.ping();
-//        debugPrint(packet);
-//        store.dispatch(ReceivePacketAction(packet));
-//      });
+      server.socket.refresh();
+      server.socket.onConnected(() {
+        if (room != null) {
+          server.joinRoom(room);
+        } else {
+          server.joinRoom(store.state.room.name);
+        }
+        store.dispatch(RoomChangeAction());
+      });
     };
   }
 
@@ -109,7 +109,7 @@ class ProtobowlApp extends StatelessWidget {
       store: store,
       child: MaterialApp(
         title: "Protobowl",
-        home: ProtobowlPage()
+        home: connected ? ProtobowlPage() : ErrorPage()
       )
     );
   }
