@@ -4,46 +4,36 @@ import 'package:redux/redux.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 
-final playerReducer = combineReducers<Player>([
-  TypedReducer<Player, ReceivePacketAction>(_parsePacket),
-]);
 
-Player _parsePacket(Player prev, ReceivePacketAction action) {
-  String packet = action.packet;
-
-
-  // Protobowl uses Socket.io which has a proprietary communications format
-  // Luckily, the json data is delivered after a { character
-  if (packet.contains("{")) {
-    String data = packet.substring(packet.indexOf("{"));
-    var jsonData = json.decode(data);
-    // Assign userID immediately when player joins, since Protobowl does not
-    // directly feed your exact userID to you when joining
-    if (jsonData["name"] == "joined" &&
-        (prev.userID == null || prev.userID == jsonData["args"][0]["id"])) {
-      jsonData = jsonData["args"][0];
-      return Player(
-        name: jsonData["name"],
-        userID: jsonData["id"]
-      );
+Player playerReducer(AppState prev, dynamic action) {
+    if (action is JoinedAction) {
+      // Assign userID immediately when player joins, since Protobowl does not
+      // directly feed your exact userID to you when joining
+      dynamic jsonData = action.data;
+      if (prev.player.userID == null || prev.player.userID == jsonData["id"]) {
+        return Player(
+            name: jsonData["name"],
+            userID: jsonData["id"]
+        );
+      }
     }
 
-    if (jsonData["name"] == "sync") {
-      jsonData = jsonData["args"][0];
+    if (action is SyncAction) {
+      dynamic jsonData = action.data;
       List<dynamic> users = jsonData["users"];
       if (users == null) {
-        return prev;
+        return prev.player;
       }
       for (var user in users) {
-        if (user["id"] == prev.userID) {
+        if (user["id"] == prev.player.userID) {
           // In case the name needs to be updated
           return Player(
-            name: user["name"],
-            userID: user["id"]
+              name: user["name"],
+              userID: user["id"]
           );
         }
       }
     }
-  }
-  return prev;
+
+    return prev.player;
 }

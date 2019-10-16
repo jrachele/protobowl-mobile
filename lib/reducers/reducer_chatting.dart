@@ -7,7 +7,7 @@ import 'package:flutterbowl/actions/actions.dart';
 
 
 bool chattingReducer(AppState prev, dynamic action) {
-  if (action is ChatAction) {
+  if (action is ClientChatAction) {
     // You are forbidden from chatting and buzzing simultaneously
     return !prev.buzzed;
   } else if (action is FinishChatAction) {

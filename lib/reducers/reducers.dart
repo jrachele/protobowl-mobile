@@ -18,8 +18,8 @@ AppState appReducer(AppState state, action) {
   }
   return AppState(
     state: gameStateReducer(state, action),
-    question: questionsReducer(state.question, action),
-    player: playerReducer(state.player, action),
+    question: questionReducer(state, action),
+    player: playerReducer(state, action),
     room: roomReducer(state, action),
     questionTime: questionTimeReducer(state, action),
     buzzed: buzzedReducer(state, action),

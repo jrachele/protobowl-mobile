@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:web_socket_channel/io.dart';
@@ -10,6 +11,7 @@ class Socket {
   Socket() {
     callbacks = Map();
   }
+  String server = "https://ocean.protobowl.com/";
 
   Future<void> io(String server) async {
     bool secure = false;
@@ -27,6 +29,7 @@ class Socket {
     if (!server.endsWith("/")) {
       server += "/";
     }
+    this.server = server;
     // Contact the server for the socket id
     String serverConnection = server + "socket.io/?EIO=$EIO_VERSION&transport=polling";
     final response = await http.get(serverConnection);
@@ -35,9 +38,28 @@ class Socket {
     var decodedJSON = json.decode(responseJSON);
     String sock = decodedJSON["sid"];
     String channelConnection = (secure ? "wss://" : "ws://") + domain + "socket.io/?EIO=$EIO_VERSION&transport=websocket&sid=$sock";
-    channel = IOWebSocketChannel.connect(channelConnection, pingInterval: Duration(milliseconds: 2500));
+    channel = IOWebSocketChannel.connect(channelConnection,
+      headers: {
+//        "Host": domain,
+        "Connection": "keep-alive, Upgrade",
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache",
+        "Upgrade": "websocket",
+        "Sec-WebSocket-Version": "13",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US;en;q=0.9",
+        "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits"
+      }
+    );
+
     _probe();
     channel.stream?.listen(_onMessageReceived);
+    Timer.periodic(Duration(milliseconds: 3000), (timer) => _ping());
+  }
+
+  void refresh() {
+    channel?.sink?.close();
+    io(this.server);
   }
 
   void emit(String name, [List<dynamic> arguments]) {
@@ -52,7 +74,7 @@ class Socket {
     }
   }
 
-  void on(String event, Function(Object data) func) {
+  void on(String event, Function(dynamic data) func) {
     callbacks[event] = func;
   }
 

@@ -16,7 +16,7 @@ class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
             appBarText: store.state.state == GameState.FINISHED ?
               _formatProtobowlAnswer(store.state.question.answer) :
               _formatProtobowlAnswer("${store.state.question.category} | ${store.state.question.difficulty}"),
-            chatAction: () => store.dispatch(ChatAction())
+            chatAction: () => store.dispatch(ClientChatAction())
         );
       },
       builder: (BuildContext context, ProtobowlAppBarViewModel viewModel) {

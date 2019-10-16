@@ -160,8 +160,9 @@ class Server {
         "question_type": "qb",
         "room_name": room,
         "muwave": "false",
-        "agent": "Flutter",
-        "agent_version": "Flutterbowl 1.0",
+        "agent": "M4/Web",
+        "agent_version": "Mon Oct 14 2019 18:19:47 GMT-0700 (Pacific Daylight Time)",
+        "referrers": ["https://protobowl.com/"],
         "version": 8
       }]);
     }

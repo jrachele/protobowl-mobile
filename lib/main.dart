@@ -36,9 +36,12 @@ void main() async {
   if (rooms.isNotEmpty) {
     room = rooms[0]["room"];
   }
+  // Connect to Socket.io server
   server.socket = Socket();
   server.socket.io(server.server);
-  server.socket.onConnected(() => server.joinRoom(room));
+  server.socket.onConnected(() {
+    server.joinRoom(room);
+  });
   runApp(new ProtobowlApp());
 }
 
@@ -54,14 +57,30 @@ class ProtobowlApp extends StatelessWidget {
 //  final TextEditingController answerController = TextEditingController();
 
   ProtobowlApp() {
-    // Mess with the Feng-shui of Redux because we are forced to
-//    server.channel.stream.listen((packet){
-//      // Always ping when receiving a packet
-//      server.ping();
-//      debugPrint(packet);
-//      store.dispatch(ReceivePacketAction(packet));
-//    });
-    
+    // In this constructor, we will set up all callbacks to the socket
+    // as well as timers
+
+    server.socket.on("sync", (data) {
+//      print(data);
+      // In a sync event, the data is always wrapped in a list, so unwrap it
+      store.dispatch(SyncAction(data[0]));
+    });
+
+    server.socket.on("log", (data) {
+//      print(data);
+      store.dispatch(LogAction(data[0]));
+    });
+
+    server.socket.on("joined", (data) {
+//      print(data);
+      store.dispatch(JoinedAction(data[0]));
+    });
+
+    server.socket.on("chat", (data) {
+//      print(data);
+      store.dispatch(ServerChatAction(data[0]));
+    });
+
     server.timerCallback = (Timer timer) => store.dispatch(TickAction());
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
