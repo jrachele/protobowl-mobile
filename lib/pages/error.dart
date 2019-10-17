@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbowl/server/server.dart';
 
+import 'protobowl.dart';
+
 class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,12 @@ class ErrorPage extends StatelessWidget {
                   fontSize: 24
               ),
             ),
-            FlatButton.icon(onPressed: server.refreshServer,
+            FlatButton.icon(onPressed: () async {
+              bool refresh = await server.refreshServer();
+              if (refresh) {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProtobowlPage()),);
+              }
+            },
                 icon: Icon(Icons.refresh,
                   color: Colors.white,),
                 label: Text("Try Again",

@@ -15,7 +15,17 @@ class Room {
   // "normal" -> [# of points if correct, # of points if incorrect]
   final Map<String, dynamic> scoring;
 
-  Room({this.name, this.rate, this.users, this.scoring, this.allowMultipleBuzzes, this.allowPauseQuestions, this.allowSkipQuestions, this.category, this.difficulty});
+  Room({
+    this.name,
+    this.rate,
+    this.users,
+    this.scoring,
+    this.allowMultipleBuzzes,
+    this.allowPauseQuestions,
+    this.allowSkipQuestions,
+    this.category,
+    this.difficulty
+  });
 
   @override
   String toString() {

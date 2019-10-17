@@ -11,7 +11,7 @@ description: Real time trivia application
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.2.0
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -23,11 +23,13 @@ dependencies:
   flutter_redux:
   web_socket_channel:
   http:
+#  socket_io_client:
   redux_logging:
   flutter_html_view:
   font_awesome_flutter:
   sqflite:
   path:
+  package_info:
 
 
   # The following adds the Cupertino Icons font to your application.

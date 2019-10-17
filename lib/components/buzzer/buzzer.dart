@@ -36,6 +36,7 @@ class ProtobowlBuzzer extends StatelessWidget {
                       margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
                       child: FloatingActionButton.extended(
                           backgroundColor: Colors.red,
+                          heroTag: "buzz",
                           icon: Icon(FontAwesomeIcons.bell),
                           label: Text("Buzz in", style: TextStyle(fontSize: 18)),
                           onPressed: () {
@@ -48,6 +49,7 @@ class ProtobowlBuzzer extends StatelessWidget {
                   Expanded(
                     child: FloatingActionButton.extended(
                       backgroundColor: Colors.black26,
+                      heroTag: "nextDisabled",
                       disabledElevation: 0,
                       icon: Icon(FontAwesomeIcons.arrowCircleRight),
                       label: Text("Next"),
@@ -73,6 +75,7 @@ class ProtobowlBuzzer extends StatelessWidget {
                       margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
                       child: FloatingActionButton.extended(
                         backgroundColor: Colors.black26,
+                        heroTag: "buzzDisabled",
                         disabledElevation: 0,
                         icon: Icon(FontAwesomeIcons.bell),
                         label: Text("Buzz in", style: TextStyle(fontSize: 18)),
@@ -84,6 +87,7 @@ class ProtobowlBuzzer extends StatelessWidget {
                   Expanded(
                     child: FloatingActionButton.extended(
                       icon: Icon(FontAwesomeIcons.arrowCircleRight),
+                      heroTag: "next",
                       label: Text("Next"),
                       onPressed: server.next,
                     ),

@@ -27,13 +27,7 @@ class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
               icon: Icon(Icons.chat_bubble),
               tooltip: 'Chat',
               onPressed: viewModel.chatAction,
-            ),
-//            IconButton(
-//            icon: Icon(Icons.arrow_right),
-//                  tooltip: 'Next Question',
-//                  onPressed: server.next,
-//                )
-              ],
+            ),],
             );
       }
     );
@@ -46,6 +40,7 @@ class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
 
 
 HtmlText _formatProtobowlAnswer(String answer) {
+  if (answer == null) return null;
   answer = answer.split("[")[0]
       .split("(")[0]
       .replaceAll("{", "<b><i>")

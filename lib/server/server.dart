@@ -1,26 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:http/http.dart' as http; // for requesting protobowl's socket
 import 'package:sqflite/sqflite.dart';
-
+import 'package:package_info/package_info.dart';
 import 'package:flutterbowl/server/database.dart';
 
 import 'socket.dart';
 
 
 class Server {
-  final String server = "http://ocean.protobowl.com/";
+  final String server = "https://ocean.protobowl.com/";
   Socket socket;
   Future<Database> database;
   String roomName;
+  PackageInfo packageInfo;
   Timer timer;
   Function(Timer) timerCallback;
   Function() finishChat;
   Function({String room}) refreshServer;
+
 
   void buzz(String qid){
     if (socket != null) {
@@ -144,24 +142,27 @@ class Server {
       await db.insert("rooms", model.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
     } else {
       cookie = objects[0]["cookie"];
-      final DatabaseModel model = DatabaseModel(
-        id: 0,
-        room: room,
-        cookie: cookie
-      );
-      await db.update("rooms", model.toMap(), where: "id=0");
+      if (room != null) {
+        final DatabaseModel model = DatabaseModel(
+            id: 0,
+            room: room,
+            cookie: cookie
+        );
+        await db.update("rooms", model.toMap(), where: "id=0");
+      }
     }
 
-    print("Cookie: $cookie");
+    if (room == null) room = "hsquizbowl";
+
     if (socket != null) {
       socket.emit("join", [{
         "cookie": cookie,
         "auth": null,
         "question_type": "qb",
         "room_name": room,
-        "muwave": "false",
-        "agent": "M4/Web",
-        "agent_version": "Mon Oct 14 2019 18:19:47 GMT-0700 (Pacific Daylight Time)",
+        "muwave": false,
+        "agent": "Mobile",
+        "agent_version": "Flutterbowl Version ${packageInfo.version}",
         "referrers": ["https://protobowl.com/"],
         "version": 8
       }]);

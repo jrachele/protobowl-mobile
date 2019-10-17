@@ -11,7 +11,7 @@ class Socket {
   Socket() {
     callbacks = Map();
   }
-  String server = "https://ocean.protobowl.com/";
+  String server;
 
   Future<bool> io(String server) async {
     bool secure = false;
@@ -32,7 +32,9 @@ class Socket {
     this.server = server;
     // Contact the server for the socket id
     String serverConnection = server + "socket.io/?EIO=$EIO_VERSION&transport=polling";
-    var response = await http.get(serverConnection).timeout(const Duration(milliseconds: 5000), onTimeout: () {
+    var response = await http.get(serverConnection).catchError((_) {
+      return null;
+    }).timeout(const Duration(milliseconds: 5000), onTimeout: () {
       return null;
     });
     if (response == null) {
@@ -64,9 +66,9 @@ class Socket {
     return channel != null;
   }
 
-  void refresh() {
+  Future<bool> refresh() {
     channel?.sink?.close();
-    io(this.server);
+    return io(this.server);
   }
 
   void emit(String name, [List<dynamic> arguments]) {
@@ -77,7 +79,6 @@ class Socket {
       }
       raw += ']';
       channel.sink.add(raw);
-      print("Emitted: $raw");
     }
   }
 
@@ -89,8 +90,8 @@ class Socket {
     callbacks["#"] = func;
   }
 
-  void _onMessageReceived(dynamic message) {
-    print(message);
+  void _onMessageReceived(dynamic message, {bool echoMessages=false}) {
+    if (echoMessages) print(message);
     if (message == "3probe") {
       _upgrade();
       // OnConnected callback
@@ -109,7 +110,7 @@ class Socket {
       String messageName = jsonObject[0];
       if (callbacks.containsKey(messageName)) {
         Function callback = callbacks[messageName];
-        callback(jsonObject.sublist(1));
+        callback(jsonObject.sublist(1)[0]);
       }
     }
   }
@@ -126,7 +127,7 @@ class Socket {
     }
   }
   void _ping() {
-    if (channel != null) {
+    if (channel != null && channel.sink != null) {
       channel.sink.add("2");
     }
   }

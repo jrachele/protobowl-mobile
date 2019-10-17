@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_logging/redux_logging.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -14,6 +15,7 @@ import 'package:path/path.dart';
 import 'pages/protobowl.dart';
 import 'pages/error.dart';
 import 'server/socket.dart';
+//import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() async {
   // Establish a connection to sqlite database
@@ -37,13 +39,26 @@ void main() async {
   if (rooms.isNotEmpty) {
     room = rooms[0]["room"];
   }
-  // Connect to Socket.io server
+  // Get package info
+  server.packageInfo = await PackageInfo.fromPlatform();
+
+
+  // Connect to Socket.io server (homegrown plugin)
   server.socket = Socket();
   bool connected = await server.socket.io(server.server);
 //  print(connected);
   server.socket.onConnected(() {
     server.joinRoom(room);
   });
+//
+//  server.socket = IO.io('https://ocean.protobowl.com', <String, dynamic>{
+//    'transports': ['websocket']
+//  });
+//
+//  server.socket.on('connect', (_) {
+//    server.joinRoom(room);
+//  });
+
   runApp(new ProtobowlApp(connected));
 }
 
@@ -65,41 +80,41 @@ class ProtobowlApp extends StatelessWidget {
 
     server.socket.on("sync", (data) {
 //      print(data);
-      // In a sync event, the data is always wrapped in a list, so unwrap it
-      store.dispatch(SyncAction(data[0]));
+      store.dispatch(SyncAction(data));
     });
 
     server.socket.on("log", (data) {
 //      print(data);
-      store.dispatch(LogAction(data[0]));
+      store.dispatch(LogAction(data));
     });
 
     server.socket.on("joined", (data) {
 //      print(data);
-      store.dispatch(JoinedAction(data[0]));
+      store.dispatch(JoinedAction(data));
     });
 
     server.socket.on("chat", (data) {
 //      print(data);
-      store.dispatch(ServerChatAction(data[0]));
+      store.dispatch(ServerChatAction(data));
     });
 
     server.timerCallback = (Timer timer) => store.dispatch(TickAction());
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
     server.finishChat = () => store.dispatch(FinishChatAction());
-    server.refreshServer = ({String room}) {
+    server.refreshServer = ({String room}) async {
       // When changing rooms, a new socket has to be fetched
       // otherwise Protobowl will count you as a zombie
-      server.socket.refresh();
+      bool success = await server.socket.refresh();
       server.socket.onConnected(() {
+        store.dispatch(RoomChangeAction());
         if (room != null) {
           server.joinRoom(room);
         } else {
           server.joinRoom(store.state.room.name);
         }
-        store.dispatch(RoomChangeAction());
       });
+      return success;
     };
   }
 

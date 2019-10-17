@@ -7,6 +7,7 @@ import 'package:flutterbowl/actions/actions.dart';
 Question questionReducer(AppState prev, dynamic action) {
   if (action is SyncAction) {
     dynamic jsonData = action.data;
+    if (jsonData == null) return prev.question;
     if (jsonData["question"] == null) return prev.question;
     // Attempt is always null if nobody has buzzed
     if (jsonData["attempt"] == null) {

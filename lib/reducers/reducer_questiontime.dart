@@ -19,6 +19,7 @@ int questionTimeReducer(AppState prev, dynamic action) {
     return prev.questionTime;
   } else if (action is SyncAction) {
     dynamic jsonData = action.data;
+    if (jsonData == null) return prev.questionTime;
       // Determine if the JSON represents a question or other cursory info
       if (jsonData["question"] == null) return prev.questionTime;
       // Attempt is always null if nobody has buzzed

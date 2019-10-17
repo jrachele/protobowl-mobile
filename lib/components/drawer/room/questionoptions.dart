@@ -48,7 +48,7 @@ class _QuestionOptionsState extends State<QuestionOptions> {
                       value: viewModel.category != ""
                           ? viewModel.category
                           : "Everything",
-                      items: <String>["Everything", "Custom", "Current Events", "Fine Arts", "Geography", "History", "Literature", "Mythology", "Philosophy", "Religion", "Science", "Social Science", "Trash"]
+                      items: <String>["Everything", "custom", "Current Events", "Fine Arts", "Geography", "History", "Literature", "Mythology", "Philosophy", "Religion", "Science", "Social Science", "Trash"]
                           .map<DropdownMenuItem<String>>((String category) =>
                               DropdownMenuItem<String>(
                                   value: category, child: Text(category)))

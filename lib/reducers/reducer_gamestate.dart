@@ -9,6 +9,7 @@ import 'package:flutterbowl/actions/actions.dart';
 GameState gameStateReducer(AppState prev, dynamic action) {
   if (action is SyncAction) {
     dynamic jsonData = action.data;
+    if (jsonData == null) return prev.state;
     if (jsonData["attempt"] == null) {
       int accumulated_time = jsonData["real_time"] - jsonData["time_offset"];
       int end_time = jsonData["end_time"];

@@ -14,6 +14,7 @@ bool buzzedReducer(AppState prev, dynamic action) {
     }
   } else if (action is SyncAction) {
     dynamic jsonData = action.data;
+    if (jsonData == null) return prev.buzzed;
     if (jsonData["attempt"] == null) return prev.buzzed;
     jsonData = jsonData["attempt"];
     if (jsonData["done"] != null && jsonData["done"] == true && jsonData["correct"] != "prompt") {

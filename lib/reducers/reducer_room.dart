@@ -9,6 +9,7 @@ import 'package:flutterbowl/actions/actions.dart';
 Room roomReducer(AppState prev, dynamic action) {
   if (action is SyncAction) {
     dynamic jsonData = action.data;
+    if (jsonData == null) return prev.room;
 
     if (jsonData["rate"] != null) {
       // This is me, being a very very bad boy
@@ -32,21 +33,25 @@ Room roomReducer(AppState prev, dynamic action) {
           difficulty: jsonData["difficulty"]
       );
     } else {
-      // If rate is null, one of the users got updated. Thanks Protobowl
-      // for writing excellent code
+      // If rate is null, one of the users got updated.
       if (jsonData["users"] == null) return prev.room;
       String singleUserName = jsonData["users"][0]["name"];
       String singleUserID = jsonData["users"][0]["id"];
+      var singleUserCorrects = jsonData["users"][0]["corrects"];
+      var singleUserWrongs = jsonData["users"][0]["wrongs"];
       List<dynamic> previousUsers = prev.room.users;
       for (var user in previousUsers) {
         if (user["id"] == singleUserID) {
           user["name"] = singleUserName;
+          user["corrects"] = singleUserCorrects;
+          user["wrongs"] = singleUserWrongs;
         }
       }
 
       return Room(
           name: server.roomName,
           rate: prev.room.rate,
+//          users: previousUsers,
           users: previousUsers,
           scoring: prev.room.scoring,
           allowMultipleBuzzes: prev.room.allowMultipleBuzzes,

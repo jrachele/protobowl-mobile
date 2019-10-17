@@ -76,6 +76,7 @@ MessageWindow chatBoxReducer(AppState prev, dynamic action) {
 
   if (action is LogAction) {
     dynamic jsonData = action.data;
+    if (jsonData == null) return prev.chatbox;
 
     String name = "A player";
     // When you join a room in protobowl, a log shows up first, before
