@@ -8,7 +8,7 @@ state throughout the application.
 
 ## Demonstration
 
-![Demonstration](https://gph.is/g/ajyX6W8)
+![Demonstration](https://media.giphy.com/media/cnzW46yPzncnhmAFWn/giphy.gif)
 
 ## Installation
 
