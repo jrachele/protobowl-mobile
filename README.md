@@ -8,7 +8,8 @@ state throughout the application.
 
 ## Demonstration
 
-![Demonstration](https://media.giphy.com/media/cnzW46yPzncnhmAFWn/giphy.gif)
+![Settings](https://media.giphy.com/media/cnzW46yPzncnhmAFWn/giphy.gif)
+![Answering a question](https://media.giphy.com/media/hTg81lYbn85YOat1PC/giphy.gif)
 
 ## Installation
 
