@@ -1,67 +1,65 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:redux/redux.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/actions/actions.dart';
 
 
 Room roomReducer(AppState prev, dynamic action) {
-  if (action is ReceivePacketAction) {
-    String packet = action.packet;
+  if (action is SyncAction) {
+    dynamic jsonData = action.data;
+    if (jsonData == null) return prev.room;
 
-    // Protobowl uses Socket.io which has a proprietary communications format
-    // Luckily, the json data is delivered after a { character
-    if (packet.contains("{")) {
-      String data = packet.substring(packet.indexOf("{"));
-      var jsonData = json.decode(data);
-      if (jsonData["name"] != "sync") return prev.room;
-      jsonData = jsonData["args"][0];
-      // Attempt is always null if nobody has buzzed
+    if (jsonData["rate"] != null) {
+      // This is me, being a very very bad boy
+      // Start the global timer according to the server rate provided in the packet
+      if (prev.room.rate != jsonData["rate"]) {
+        // Update the timer
+        server.timer.cancel();
+        server.timer =
+            Timer.periodic(Duration(milliseconds: jsonData["rate"].round()), server.timerCallback);
+      }
 
-      if (jsonData["rate"] != null) {
-        // This is me, being a very very bad boy
-        // Start the global timer according to the server rate provided in the packet
-        if (prev.room.rate != jsonData["rate"]) {
-          // Update the timer
-          server.timer.cancel();
-          server.timer =
-              Timer.periodic(Duration(milliseconds: jsonData["rate"].round()), server.timerCallback);
+      return Room(
+          name: server.roomName,
+          rate: jsonData["rate"].round(),
+          users: jsonData["users"] ?? prev.room.users,
+          scoring: jsonData["scoring"] ?? prev.room.scoring,
+          allowMultipleBuzzes: jsonData["max_buzz"] == null,
+          allowPauseQuestions: !jsonData["no_pause"],
+          allowSkipQuestions: !jsonData["no_skip"],
+          category: jsonData["category"],
+          difficulty: jsonData["difficulty"]
+      );
+    } else {
+      // If rate is null, one of the users got updated.
+      if (jsonData["users"] == null) return prev.room;
+      String singleUserName = jsonData["users"][0]["name"];
+      String singleUserID = jsonData["users"][0]["id"];
+      var singleUserCorrects = jsonData["users"][0]["corrects"];
+      var singleUserWrongs = jsonData["users"][0]["wrongs"];
+      List<dynamic> previousUsers = prev.room.users;
+      for (var user in previousUsers) {
+        if (user["id"] == singleUserID) {
+          user["name"] = singleUserName;
+          user["corrects"] = singleUserCorrects;
+          user["wrongs"] = singleUserWrongs;
         }
+      }
 
-        return Room(
-            name: server.roomName,
-            rate: jsonData["rate"].round(),
-            users: jsonData["users"] ?? prev.room.users,
-            scoring: jsonData["scoring"] ?? prev.room.scoring,
-            allowMultipleBuzzes: jsonData["max_buzz"] == null,
-            allowPauseQuestions: !jsonData["no_pause"],
-            allowSkipQuestions: !jsonData["no_skip"],
-        );
-      } else {
-        // If rate is null, one of the users got updated. Thanks Protobowl
-        // for writing excellent code
-        if (jsonData["users"] == null) return prev.room;
-        String singleUserName = jsonData["users"][0]["name"];
-        String singleUserID = jsonData["users"][0]["id"];
-        List<dynamic> previousUsers = prev.room.users;
-        for (var user in previousUsers) {
-          if (user["id"] == singleUserID) {
-            user["name"] = singleUserName;
-          }
-        }
-
-        return Room(
+      return Room(
           name: server.roomName,
           rate: prev.room.rate,
+//          users: previousUsers,
           users: previousUsers,
           scoring: prev.room.scoring,
           allowMultipleBuzzes: prev.room.allowMultipleBuzzes,
           allowPauseQuestions: prev.room.allowPauseQuestions,
           allowSkipQuestions: prev.room.allowSkipQuestions,
-        );
-
-      }
+          category: prev.room.category,
+          difficulty: prev.room.difficulty
+      );
     }
   }
   return prev.room;

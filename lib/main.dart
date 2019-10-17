@@ -1,16 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_logging/redux_logging.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutterbowl/actions/actions.dart';
 import 'package:flutterbowl/models/models.dart';
 import 'package:flutterbowl/reducers/reducers.dart';
-import 'package:flutterbowl/pages/protobowl.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
+import 'pages/protobowl.dart';
+import 'pages/error.dart';
+import 'server/socket.dart';
+//import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() async {
   // Establish a connection to sqlite database
@@ -34,10 +39,27 @@ void main() async {
   if (rooms.isNotEmpty) {
     room = rooms[0]["room"];
   }
-  // Initialize the server and get the channel asynchronously
-  server.channel = await server.getChannel();
-  server.joinRoom(room);
-  runApp(new ProtobowlApp());
+  // Get package info
+  server.packageInfo = await PackageInfo.fromPlatform();
+
+
+  // Connect to Socket.io server (homegrown plugin)
+  server.socket = Socket();
+  bool connected = await server.socket.io(server.server);
+//  print(connected);
+  server.socket.onConnected(() {
+    server.joinRoom(room);
+  });
+//
+//  server.socket = IO.io('https://ocean.protobowl.com', <String, dynamic>{
+//    'transports': ['websocket']
+//  });
+//
+//  server.socket.on('connect', (_) {
+//    server.joinRoom(room);
+//  });
+
+  runApp(new ProtobowlApp(connected));
 }
 
 
@@ -48,21 +70,52 @@ class ProtobowlApp extends StatelessWidget {
   initialState: AppState.initial(),
 //    middleware: [LoggingMiddleware.printer()]
   );
+  final bool connected;
 
 //  final TextEditingController answerController = TextEditingController();
 
-  ProtobowlApp() {
-    // Mess with the Feng-shui of Redux because we are forced to
-    server.channel.stream.listen((packet){
-      // Always ping when receiving a packet
-      server.ping();
-      debugPrint(packet);
-      store.dispatch(ReceivePacketAction(packet));
+  ProtobowlApp(this.connected) {
+    // In this constructor, we will set up all callbacks to the socket
+    // as well as timers
+
+    server.socket.on("sync", (data) {
+//      print(data);
+      store.dispatch(SyncAction(data));
     });
+
+    server.socket.on("log", (data) {
+//      print(data);
+      store.dispatch(LogAction(data));
+    });
+
+    server.socket.on("joined", (data) {
+//      print(data);
+      store.dispatch(JoinedAction(data));
+    });
+
+    server.socket.on("chat", (data) {
+//      print(data);
+      store.dispatch(ServerChatAction(data));
+    });
+
     server.timerCallback = (Timer timer) => store.dispatch(TickAction());
     server.timer =
         Timer.periodic(Duration(milliseconds: 60), server.timerCallback);
     server.finishChat = () => store.dispatch(FinishChatAction());
+    server.refreshServer = ({String room}) async {
+      // When changing rooms, a new socket has to be fetched
+      // otherwise Protobowl will count you as a zombie
+      bool success = await server.socket.refresh();
+      server.socket.onConnected(() {
+        store.dispatch(RoomChangeAction());
+        if (room != null) {
+          server.joinRoom(room);
+        } else {
+          server.joinRoom(store.state.room.name);
+        }
+      });
+      return success;
+    };
   }
 
   @override
@@ -71,7 +124,7 @@ class ProtobowlApp extends StatelessWidget {
       store: store,
       child: MaterialApp(
         title: "Protobowl",
-        home: ProtobowlPage()
+        home: connected ? ProtobowlPage() : ErrorPage()
       )
     );
   }

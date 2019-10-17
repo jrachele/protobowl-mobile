@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_html_view/flutter_html_text.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 
 class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -16,7 +16,7 @@ class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
             appBarText: store.state.state == GameState.FINISHED ?
               _formatProtobowlAnswer(store.state.question.answer) :
               _formatProtobowlAnswer("${store.state.question.category} | ${store.state.question.difficulty}"),
-            chatAction: () => store.dispatch(ChatAction())
+            chatAction: () => store.dispatch(ClientChatAction())
         );
       },
       builder: (BuildContext context, ProtobowlAppBarViewModel viewModel) {
@@ -27,13 +27,7 @@ class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
               icon: Icon(Icons.chat_bubble),
               tooltip: 'Chat',
               onPressed: viewModel.chatAction,
-            ),
-//            IconButton(
-//            icon: Icon(Icons.arrow_right),
-//                  tooltip: 'Next Question',
-//                  onPressed: server.next,
-//                )
-              ],
+            ),],
             );
       }
     );
@@ -46,6 +40,7 @@ class ProtobowlAppBar extends StatelessWidget with PreferredSizeWidget {
 
 
 HtmlText _formatProtobowlAnswer(String answer) {
+  if (answer == null) return null;
   answer = answer.split("[")[0]
       .split("(")[0]
       .replaceAll("{", "<b><i>")

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 
 
 class ProtobowlAnswerBar extends StatefulWidget {
@@ -18,6 +18,7 @@ class _ProtobowlAnswerBarState extends State<ProtobowlAnswerBar> {
               new Flexible(
                 child: TextField(
                   autofocus: true,
+                  autocorrect: false,
                   controller: _answerController,
                   decoration: InputDecoration(
                       hintText: "Answer"),

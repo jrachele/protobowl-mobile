@@ -1,14 +1,28 @@
-class ReceivePacketAction {
-  final String packet;
+class SyncAction {
+  final dynamic data;
+  SyncAction(this.data);
+}
 
-  ReceivePacketAction(this.packet);
+class JoinedAction {
+  final dynamic data;
+  JoinedAction(this.data);
+}
+
+class LogAction {
+  final dynamic data;
+  LogAction(this.data);
+}
+
+class ServerChatAction {
+  final dynamic data;
+  ServerChatAction(this.data);
 }
 
 class TickAction {}
 
 class BuzzAction {}
 
-class ChatAction {}
+class ClientChatAction {}
 
 class FinishChatAction {}
 

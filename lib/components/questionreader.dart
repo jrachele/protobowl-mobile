@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_html_view/flutter_html_text.dart';
-import 'package:flutterbowl/server.dart';
+import 'package:flutterbowl/server/server.dart';
 import 'package:flutterbowl/models/models.dart';
 
 class ProtobowlQuestionReader extends StatelessWidget {
@@ -17,7 +17,8 @@ class ProtobowlQuestionReader extends StatelessWidget {
                     beginTime: store.state.question.beginTime,
                     currentTime: store.state.questionTime,
                     endTime: store.state.question.endTime,
-                    rate: store.state.room.rate
+                    rate: store.state.room.rate,
+                    state: store.state.state,
                   );
         },
         builder: (BuildContext context, ProtobowlQuestionReaderViewModel viewModel) {
@@ -55,11 +56,13 @@ class ProtobowlQuestionReaderViewModel {
   final int currentTime;
   final int endTime;
   final int rate;
+  final GameState state;
 
-  ProtobowlQuestionReaderViewModel({ this.question, this.timings, this.beginTime, this.currentTime, this.endTime, this.rate});
+  ProtobowlQuestionReaderViewModel({ this.question, this.timings, this.beginTime, this.currentTime, this.endTime, this.rate, this.state});
 
   String calculateVisibleWords(ScrollController controller) {
     if (timings == null) return "";
+    if (state == GameState.FINISHED || state == GameState.IDLE) return question;
     // Walk up the timings until we are at the index of the word in the question
     int i = 0;
     for (int t = beginTime; i < timings.length && t < currentTime; i++) {
@@ -70,7 +73,7 @@ class ProtobowlQuestionReaderViewModel {
     // Side effect to make the scroll view adapt to the size of the question
     // but only when the widget is done building and when the question is currently
     // being read
-    if (i < timings.length-1) {
+    if (i < timings.length-1 ) {
       WidgetsBinding.instance
           .addPostFrameCallback((_){
         if (controller.hasClients) {

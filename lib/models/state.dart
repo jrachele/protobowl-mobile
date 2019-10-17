@@ -11,7 +11,7 @@ class AppState {
   final Question question;
   final Room room;
   final Player player;
-  final Chatbox chatbox;
+  final MessageWindow chatbox;
   final int questionTime;
   final bool buzzed;
   final bool chatting;
@@ -37,7 +37,7 @@ class AppState {
         rate: 60
       ),
       player: Player(),
-      chatbox: Chatbox(),
+      chatbox: MessageWindow(),
       questionTime: 0,
       buzzed: false,
       chatting: false

@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutterbowl/models/models.dart';
 
+import 'about.dart';
 import 'leaderboard.dart';
 import 'user.dart';
 import 'package:flutterbowl/components/drawer/room/room.dart';
