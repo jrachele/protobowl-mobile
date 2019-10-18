@@ -50,14 +50,6 @@ void main() async {
   server.socket.onConnected(() {
     server.joinRoom(room);
   });
-//
-//  server.socket = IO.io('https://ocean.protobowl.com', <String, dynamic>{
-//    'transports': ['websocket']
-//  });
-//
-//  server.socket.on('connect', (_) {
-//    server.joinRoom(room);
-//  });
 
   runApp(new ProtobowlApp(connected));
 }
@@ -71,8 +63,6 @@ class ProtobowlApp extends StatelessWidget {
 //    middleware: [LoggingMiddleware.printer()]
   );
   final bool connected;
-
-//  final TextEditingController answerController = TextEditingController();
 
   ProtobowlApp(this.connected) {
     // In this constructor, we will set up all callbacks to the socket
@@ -107,12 +97,12 @@ class ProtobowlApp extends StatelessWidget {
       // otherwise Protobowl will count you as a zombie
       bool success = await server.socket.refresh();
       server.socket.onConnected(() {
-        store.dispatch(RoomChangeAction());
         if (room != null) {
           server.joinRoom(room);
         } else {
           server.joinRoom(store.state.room.name);
         }
+        store.dispatch(RoomChangeAction());
       });
       return success;
     };

@@ -14,7 +14,7 @@ import 'package:flutterbowl/reducers/reducer_chatbox.dart';
 AppState appReducer(AppState state, action) {
   // If there is a room change action, the whole thing has to go initial
   if (action is RoomChangeAction) {
-    return AppState.initial();
+    return AppState.initial(rate: state.room.rate);
   }
   return AppState(
     state: gameStateReducer(state, action),

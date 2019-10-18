@@ -17,6 +17,7 @@ class _QuestionOptionsState extends State<QuestionOptions> {
         converter: (Store<AppState> store) => QuestionOptionsViewModel(
               category: store.state.room.category,
               difficulty: store.state.room.difficulty,
+              lock: store.state.player.lock,
             ),
         builder: (BuildContext context, QuestionOptionsViewModel viewModel) {
           return Row(
@@ -71,5 +72,6 @@ class _QuestionOptionsState extends State<QuestionOptions> {
 class QuestionOptionsViewModel {
   final String category;
   final String difficulty;
-  QuestionOptionsViewModel({this.category, this.difficulty});
+  final bool lock;
+  QuestionOptionsViewModel({this.category, this.difficulty, this.lock});
 }

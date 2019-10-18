@@ -13,10 +13,12 @@ class RateSlider extends StatefulWidget {
 class _RateSliderState extends State<RateSlider> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return StoreConnector<AppState, double>(converter: (Store<AppState> store) {
-      return store.state.room.rate.toDouble();
-    }, builder: (BuildContext context, double rate) {
+    return StoreConnector<AppState, RateViewModel>(converter: (Store<AppState> store) {
+      return RateViewModel(
+        rate: store.state.room.rate,
+        lock: store.state.player.lock
+      );
+    }, builder: (BuildContext context, RateViewModel viewModel) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -25,15 +27,15 @@ class _RateSliderState extends State<RateSlider> {
             margin: EdgeInsets.fromLTRB(8, 0, 32, 0),
           ),
           Container(
-            child: Text("Rate: $rate")
+            child: Text("Rate: ${viewModel.rate}")
           ),
           Expanded(
               child: Slider(
             min: 10,
             max: 110,
-            value: rate,
+            value: viewModel.rate.toDouble(),
 //                    label: "Rate",
-            onChanged: (speed) {
+            onChanged: viewModel.lock ? null : (speed) {
               setState(() {
                 server.setSpeed(speed);
               });
@@ -43,4 +45,10 @@ class _RateSliderState extends State<RateSlider> {
       );
     });
   }
+}
+
+class RateViewModel {
+  final int rate;
+  final bool lock;
+  RateViewModel({this.rate, this.lock});
 }

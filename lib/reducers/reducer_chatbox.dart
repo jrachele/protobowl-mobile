@@ -21,13 +21,13 @@ MessageWindow chatBoxReducer(AppState prev, dynamic action) {
 
     if (messages[jsonData["session"]] != null) {
       // We don't want to have to fetch the name if we don't have to
-      messages[jsonData["session"]] = Message(
+      messages[jsonData["session"]] = ChatMessage(
         message: jsonData["text"],
         complete: jsonData["done"],
         name: messages[jsonData["session"]].name,
       );
     } else {
-      messages[jsonData["session"]] = Message(
+      messages[jsonData["session"]] = ChatMessage(
         message: jsonData["text"],
         complete: jsonData["done"],
         // Get name of user given ID
@@ -78,23 +78,44 @@ MessageWindow chatBoxReducer(AppState prev, dynamic action) {
     dynamic jsonData = action.data;
     if (jsonData == null) return prev.chatbox;
 
-    String name = "A player";
+    String name = jsonData["user"];
     // When you join a room in protobowl, a log shows up first, before
     // the username is actually known. So we must update the log if the
     // name is not there
-    bool userNameExists = false;
+    bool complete = false;
     if (prev.room.users != null) {
+      // First, check if the user represents a pool of users already here
       Iterable<dynamic> potentialUsers = prev.room.users.where((user) => user["id"] == jsonData["user"]);
       if (potentialUsers.isNotEmpty) {
         name = potentialUsers.first["name"];
-        userNameExists = true;
+        complete = true;
+      }
+
+      // Otherwise, check if the user that joined is yourself
+      if (prev.player != null && prev.player.name != null && prev.player.userID == jsonData["user"]) {
+        name = prev.player.name;
+        complete = true;
       }
     }
 
     messages[jsonData["time"].toString()] = LogMessage(
       message: jsonData["verb"],
       name: name,
+      complete: complete,
     );
+  }
+
+  if (action is JoinedAction) {
+    dynamic jsonData = action.data;
+    if (jsonData == null) return prev.chatbox;
+
+    messages.forEach((key, message) {
+      // Allows for updating previous messages after the fact
+      if (!message.complete && message.name == jsonData["id"]) {
+        message.name = jsonData["name"];
+        message.complete = true;
+      }
+    });
   }
   // Now that we have the children, we have the chatbox.
   return MessageWindow(

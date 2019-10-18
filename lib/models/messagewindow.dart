@@ -7,11 +7,15 @@ class MessageWindow {
 }
 
 class Message {
-  final String name;
-  final String message;
-  final bool complete;
+  String name;
+  String message;
+  bool complete;
 
   Message({this.name, this.message, this.complete});
+}
+
+class ChatMessage extends Message {
+  ChatMessage({name, message, complete}) : super(name: name, message: message, complete: complete);
 }
 
 class BuzzMessage extends Message {

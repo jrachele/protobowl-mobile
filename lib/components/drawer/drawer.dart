@@ -10,6 +10,16 @@ import 'user.dart';
 import 'package:flutterbowl/components/drawer/room/room.dart';
 
 class ProtobowlDrawer extends StatelessWidget {
+  String version;
+
+  ProtobowlDrawer(this.version) {
+    if (this.version == null) {
+      this.version = "";
+    } else {
+      this.version = "\tv" + this.version;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -17,7 +27,7 @@ class ProtobowlDrawer extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-              height: 130,
+              height: 132,
               margin: EdgeInsets.zero,
               child: DrawerHeader(
                   decoration: BoxDecoration(color: Colors.blue),
@@ -26,6 +36,9 @@ class ProtobowlDrawer extends StatelessWidget {
                     children: <Widget>[
                       Text("Protobowl", style: TextStyle(fontSize: 36, color: Colors.white)),
                       Text("doing one thing and doing it acceptably well", style: TextStyle(fontSize: 12, color: Colors.white, fontStyle: FontStyle.italic)),
+//                      Spacer(),
+                      Text("protobowl-mobile$version", style: TextStyle(fontSize: 11, color: Colors.white30, fontStyle: FontStyle.italic)),
+//                      Text("github.com/jrachele", style: TextStyle(fontSize: 12, color: Colors.white30, fontStyle: FontStyle.italic)),
                     ],
                   )
               ),
@@ -33,7 +46,6 @@ class ProtobowlDrawer extends StatelessWidget {
             UserView(),
             RoomView(),
             LeaderboardView(),
-//            Spacer(),
           ],
         )
     );

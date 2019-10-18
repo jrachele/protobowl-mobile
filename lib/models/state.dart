@@ -29,14 +29,19 @@ class AppState {
 //        this.room = Room.blank,
       });
 
-  factory AppState.initial() {
+  factory AppState.initial({int rate = 60}) {
     return AppState(
       state: GameState.IDLE,
       question: Question(),
       room: Room(
-        rate: 60
+        allowMultipleBuzzes: true,
+        allowPauseQuestions: true,
+        allowSkipQuestions: true,
+        rate: rate,
       ),
-      player: Player(),
+      player: Player(
+        lock: false
+      ),
       chatbox: MessageWindow(),
       questionTime: 0,
       buzzed: false,

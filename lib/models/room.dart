@@ -24,7 +24,7 @@ class Room {
     this.allowPauseQuestions,
     this.allowSkipQuestions,
     this.category,
-    this.difficulty
+    this.difficulty,
   });
 
   @override

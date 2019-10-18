@@ -13,13 +13,13 @@ class CheckboxPause extends StatefulWidget {
 class _PauseState extends State<CheckboxPause> {
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, bool>(converter: (Store<AppState> store) {
-      return store.state.room.allowPauseQuestions ?? true;
-    }, builder: (BuildContext context, bool allowPausing) {
+    return StoreConnector<AppState, PauseViewModel>(converter: (Store<AppState> store) {
+      return PauseViewModel(allowPauseQuestions: store.state.room.allowPauseQuestions, lock: store.state.player.lock);
+    }, builder: (BuildContext context, PauseViewModel viewModel) {
       return CheckboxListTile(
         title: Text("Allow pausing questions"), //    <-- label
-        value: allowPausing,
-        onChanged: (newValue) {
+        value: viewModel.allowPauseQuestions,
+        onChanged: viewModel.lock ? null : (newValue) {
           setState(() {
             server.setPausing(newValue);
           });
@@ -29,3 +29,11 @@ class _PauseState extends State<CheckboxPause> {
     });
   }
 }
+
+class PauseViewModel {
+  final bool allowPauseQuestions;
+  final bool lock;
+
+  PauseViewModel({this.allowPauseQuestions, this.lock});
+}
+

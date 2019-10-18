@@ -13,13 +13,13 @@ class CheckboxSkip extends StatefulWidget {
 class _SkipState extends State<CheckboxSkip> {
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, bool>(converter: (Store<AppState> store) {
-      return store.state.room.allowSkipQuestions ?? true;
-    }, builder: (BuildContext context, bool allowSkipping) {
+    return StoreConnector<AppState, SkipViewModel>(converter: (Store<AppState> store) {
+      return SkipViewModel(allowSkipQuestions: store.state.room.allowSkipQuestions, lock: store.state.player.lock);
+    }, builder: (BuildContext context, SkipViewModel viewModel) {
       return CheckboxListTile(
         title: Text("Allow skipping questions"), //    <-- label
-        value: allowSkipping,
-        onChanged: (newValue) {
+        value: viewModel.allowSkipQuestions,
+        onChanged: viewModel.lock ? null : (newValue) {
           setState(() {
             server.setSkipping(newValue);
           });
@@ -28,4 +28,11 @@ class _SkipState extends State<CheckboxSkip> {
       );
     });
   }
+}
+
+class SkipViewModel {
+  final bool allowSkipQuestions;
+  final bool lock;
+
+  SkipViewModel({this.allowSkipQuestions, this.lock});
 }

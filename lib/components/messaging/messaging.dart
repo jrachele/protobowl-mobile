@@ -72,19 +72,26 @@ List<Widget> _parseMessageWindow(MessageWindow window) {
     } else if (message is LogMessage) {
       return Icon(
         FontAwesomeIcons.asterisk,
-        color: Colors.black26,
+        color: Colors.black54,
       );
-    } else {
-      return Icon(
-          FontAwesomeIcons.commentDots,
-          color: Colors.black26
-      );
+    } else if (message is ChatMessage) {
+      if (message.complete) {
+        return Icon(
+            FontAwesomeIcons.commentDots,
+            color: Colors.black54
+        );
+      } else {
+        return Icon(
+            FontAwesomeIcons.commentDots,
+            color: Colors.black26
+        );
+      }
     }
   }
 
     messages.forEach((String string, Message message) {
-      // Only show non-empty messages
-      if (!(message.message.isEmpty && message.complete && message is! BuzzMessage)) {
+      // Only show non-empty messages and complete log messages
+      if (!(message.message.isEmpty && message.complete && message is! BuzzMessage) && !(!message.complete && message is LogMessage)) {
         children.insert(0,
             Card(
                 child: ListTile(
@@ -104,7 +111,7 @@ List<Widget> _parseMessageWindow(MessageWindow window) {
                         Expanded(
                           child: Container(
                             child: message.message.isNotEmpty ?
-                            Text("${message.message}") : Text("(no answer)", style: TextStyle(fontStyle: FontStyle.italic)),
+                            Text("${message.message}") : Text(_determineBlankMessage(message), style: TextStyle(fontStyle: FontStyle.italic)),
                           ),
                         ),
 
@@ -116,4 +123,12 @@ List<Widget> _parseMessageWindow(MessageWindow window) {
       }
   });
   return children;
+}
+
+String _determineBlankMessage(Message message) {
+  if (message is BuzzMessage && message.complete) {
+    return "(no answer)";
+  } else {
+    return "(blank)";
+  }
 }

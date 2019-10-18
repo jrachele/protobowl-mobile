@@ -14,23 +14,24 @@ Room roomReducer(AppState prev, dynamic action) {
     if (jsonData["rate"] != null) {
       // This is me, being a very very bad boy
       // Start the global timer according to the server rate provided in the packet
-      if (prev.room.rate != jsonData["rate"]) {
+      int newRate = jsonData["rate"].round();
+      if (prev.room.rate != newRate) {
         // Update the timer
         server.timer.cancel();
         server.timer =
-            Timer.periodic(Duration(milliseconds: jsonData["rate"].round()), server.timerCallback);
+            Timer.periodic(Duration(milliseconds: newRate), server.timerCallback);
       }
 
       return Room(
           name: server.roomName,
-          rate: jsonData["rate"].round(),
+          rate: newRate,
           users: jsonData["users"] ?? prev.room.users,
           scoring: jsonData["scoring"] ?? prev.room.scoring,
           allowMultipleBuzzes: jsonData["max_buzz"] == null,
           allowPauseQuestions: !jsonData["no_pause"],
           allowSkipQuestions: !jsonData["no_skip"],
           category: jsonData["category"],
-          difficulty: jsonData["difficulty"]
+          difficulty: jsonData["difficulty"],
       );
     } else {
       // If rate is null, one of the users got updated.
@@ -51,14 +52,13 @@ Room roomReducer(AppState prev, dynamic action) {
       return Room(
           name: server.roomName,
           rate: prev.room.rate,
-//          users: previousUsers,
           users: previousUsers,
           scoring: prev.room.scoring,
           allowMultipleBuzzes: prev.room.allowMultipleBuzzes,
           allowPauseQuestions: prev.room.allowPauseQuestions,
           allowSkipQuestions: prev.room.allowSkipQuestions,
           category: prev.room.category,
-          difficulty: prev.room.difficulty
+          difficulty: prev.room.difficulty,
       );
     }
   }

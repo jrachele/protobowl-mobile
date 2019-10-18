@@ -8,10 +8,11 @@ class Socket {
   static const EIO_VERSION = 3;
   IOWebSocketChannel channel;
   Map callbacks;
+  String server;
+
   Socket() {
     callbacks = Map();
   }
-  String server;
 
   Future<bool> io(String server) async {
     bool secure = false;
@@ -61,7 +62,7 @@ class Socket {
     );
 
     _probe();
-    channel.stream?.listen(_onMessageReceived);
+    channel.stream?.listen((message) =>_onMessageReceived(message, echoMessages: true));
     Timer.periodic(Duration(milliseconds: 3000), (timer) => _ping());
     return channel != null;
   }
@@ -116,13 +117,13 @@ class Socket {
   }
 
   void _probe() {
-    if (channel != null) {
+    if (channel != null && channel.sink != null) {
       channel.sink.add("2probe");
     }
   }
 
   void _upgrade() {
-    if (channel != null) {
+    if (channel != null && channel.sink != null) {
       channel.sink.add("5");
     }
   }

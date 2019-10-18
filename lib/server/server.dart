@@ -166,6 +166,7 @@ class Server {
         "referrers": ["https://protobowl.com/"],
         "version": 8
       }]);
+      next();
     }
     this.roomName = room;
   }

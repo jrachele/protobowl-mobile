@@ -32,7 +32,7 @@ class _ProtobowlPageState extends State<ProtobowlPage> with WidgetsBindingObserv
               ProtobowlBuzzer()
         ]
         ),
-      drawer: ProtobowlDrawer()
+      drawer: ProtobowlDrawer(server.packageInfo?.version)
     );
   }
 

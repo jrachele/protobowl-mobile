@@ -13,13 +13,17 @@ class CheckboxMultipleBuzz extends StatefulWidget {
 class _MultipleBuzzState extends State<CheckboxMultipleBuzz> {
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, bool>(converter: (Store<AppState> store) {
-      return store.state.room.allowMultipleBuzzes ?? true;
-    }, builder: (BuildContext context, bool allowMultipleBuzzes) {
+    return StoreConnector<AppState, MultipleBuzzViewModel>(
+        converter: (Store<AppState> store) {
+          return MultipleBuzzViewModel(
+              allowMultipleBuzzes: store.state.room.allowMultipleBuzzes,
+              lock: store.state.player.lock);
+    },
+        builder: (BuildContext context, MultipleBuzzViewModel viewModel) {
       return CheckboxListTile(
         title: Text("Allow multiple buzzes"), //    <-- label
-        value: allowMultipleBuzzes,
-        onChanged: (newValue) {
+        value: viewModel.allowMultipleBuzzes,
+        onChanged: viewModel.lock ? null : (newValue) {
           setState(() {
             server.setMultipleBuzzes(newValue);
           });
@@ -28,4 +32,10 @@ class _MultipleBuzzState extends State<CheckboxMultipleBuzz> {
       );
     });
   }
+}
+
+class MultipleBuzzViewModel {
+  final bool allowMultipleBuzzes;
+  final bool lock;
+  MultipleBuzzViewModel({this.allowMultipleBuzzes, this.lock});
 }
